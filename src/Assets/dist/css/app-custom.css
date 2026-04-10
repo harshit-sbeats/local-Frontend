@@ -1,0 +1,779 @@
+/* 1. Global Reset & Typography */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-blue: #007bff;
+    --hover-blue: #0056b3;
+    --border-color: #dee2e6;
+    --bg-light: #f4f6f9;
+    --text-dark: #212529;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+body {
+    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13.5px; /* Reduced from 16px for a more compact UI */
+    line-height: 1.4;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+}
+
+/* 2. Utility & Shared Components */
+.rounded-6 { border-radius: 6px !important; }
+.cursor-pointer { cursor: pointer; }
+.no-select { user-select: none; }
+
+/* Circular Components (Avatars, Icons, Buttons) */
+.user-avatar, .avatar-circle, .icon-circle, .back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.user-avatar, .avatar-circle {
+    background: #f1f1f1;
+    font-weight: 600;
+    color: #444;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+}
+
+.user-avatar { width: 40px; height: 40px; font-size: 24px; float: left; margin-right: 10px; }
+.avatar-circle { width: 48px; height: 48px; font-size: 20px; }
+
+.icon-circle { width: 46px; height: 46px; background: #f3f4f6; }
+.icon-circle i { color: #6b7280; font-size: 18px; }
+
+/* 3. Navigation & Tabs */
+.nav-tabs { border-bottom: 1px solid var(--border-color); }
+.nav-tabs .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-blue);
+    font-weight: 700;
+    background-color: #fff;
+    border-color: var(--border-color) var(--border-color) #fff;
+    border-top: 3px solid var(--primary-blue);
+}
+
+/* 4. Table & Line Items */
+#product_line_item td {
+    padding: 12px 8px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid #f1f1f1;
+}
+
+#product_line_item td:last-child { border-right: none; }
+
+/* 5. Buttons & Badges */
+.btn-soft {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #e4e7eb;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.back-btn {
+    width: 38px; height: 38px;
+    background: #fff;
+    border: 1px solid #e5e8ec;
+    box-shadow: 0px 3px 10px rgba(0,0,0,0.05);
+}
+
+.copy-btn {
+    border: 1px solid #dcdfe3;
+    background: #fff;
+    padding: 1px 4px; /* Increased horizontal slightly */
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.btn-soft:hover, .back-btn:hover, .copy-btn:hover {
+    background: #f9fafb;
+    border-color: #d5d9dd;
+}
+
+.status-pill, .badge-info {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.status-pill {
+    background: #d4f5e9;
+    color: #0b8e5f;
+    font-size: 11px;
+    padding: 4px 10px;
+}
+
+.badge-info {
+    padding: 6px 12px;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s;
+}
+
+.badge-info:hover { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22); }
+
+/* 6. Form Components & Typeahead */
+.form-label.small { font-weight: 600; font-size: 0.875rem; }
+
+.tt-menu { width: 100%; background: #fff; border: 1px solid #ccc; border-radius: .25rem; z-index: 2000 !important; }
+.tt-suggestion { padding: .375rem .75rem; cursor: pointer; font-size: 14px; }
+.tt-suggestion:hover { background-color: var(--primary-blue); color: #fff; }
+
+/* 7. Dropzone Fixes */
+.dropzone .dz-preview.dz-file-preview .dz-image { 
+    background: linear-gradient(to bottom, #328dcc, #2478b2) !important; 
+}
+.dropzone .dz-preview .dz-progress { display: none; }
+
+/* 8. Misc */
+.card-custom {
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+}
+
+.link {
+    color: var(--primary-blue) !important;
+    border-bottom: 1px solid var(--primary-blue) !important;
+    text-decoration: none;
+}
+
+/*CSS Fix for Collapsed State*/
+/* Sidebar Mini & Collapse Logic */
+.sidebar-mini.sidebar-collapse .user-panel .info {
+    display: none !important; /* Instantly hide text when collapsed */
+    opacity: 0;
+}
+
+.sidebar-mini.sidebar-collapse .user-panel .image {
+    padding-left: 0.8rem !important; /* Center the avatar in the narrow bar */
+    margin-right: 0;
+}
+
+/* Ensure the user panel doesn't scroll/overflow during transition */
+.user-panel {
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Avatar sizing to match your screenshots */
+.user-panel img {
+    width: 2.1rem !important; /* */
+    height: 2.1rem !important;
+    object-fit: cover;
+}
+
+.user-panel .info a {
+    font-size: 13px; /* Matches your compact font requirement */
+    font-weight: 600;
+    text-decoration: none;
+}
+
+
+/** Tabulator Clean White Theme Overrides **/
+.input-error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.25);
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Custom highlight for dropdown items */
+.dropdown-item:hover {
+    background-color: #cacbcb !important; /* Bootstrap Primary Blue */
+}
+
+/* Ensure the delete button highlight looks correct */
+.dropdown-item.text-danger:hover {
+    background-color: #dc3545 !important; /* Bootstrap Red */
+    color: #ffffff !important;
+}
+
+
+/* Ensure text turns white when the dropdown item is hovered or active */
+.searchable-select-item, 
+.dropdown-item {
+    color: #212529 !important; /* Standard dark text */
+    background-color: #ffffff;
+    padding: 8px 12px;
+}
+
+/* 2. Hover/Active State: White text on Blue background */
+.searchable-select-item:hover, 
+.searchable-select-item.active,
+.dropdown-item:hover, 
+.dropdown-item.active {
+    background-color: #0d6efd !important; /* Bootstrap Primary Blue */
+    color: #ffffff !important;           /* Force White Text */
+    cursor: pointer;
+}
+
+/* 3. Handle sub-text (vendor codes) */
+.searchable-select-item .text-muted {
+    color: #6c757d !important; /* Grey in normal state */
+}
+
+.searchable-select-item:hover .text-muted,
+.searchable-select-item.active .text-muted {
+    color: rgba(255, 255, 255) !important; /* Light white in hover state */
+}
+
+.modal-body {
+    max-height: calc(100vh - 100px); /* Adjust based on header/footer size */
+    overflow: scroll !important; 
+}
+
+
+/* Base state - matches your page flow */
+.page-sticky-header {
+  position: sticky;
+  top: -10px;
+  z-index: 1020;
+  background: transparent; 
+  box-shadow: none; /* Explicitly remove shadow here */
+  transition: all 0.3s ease-in-out;
+  transform-origin: left center;
+}
+
+/* Sticky Position: Shadow, Background, and 80% Scale appear here */
+.page-sticky-header.is-stuck {
+  background: #ffffff;
+  padding: 10px 20px;
+  
+  /* Add shadow ONLY when stuck */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  
+  /* Scale to 80% */
+  transform: scale(0.8);
+  width: 125%; 
+  
+  /* Optional: slightly darken the border for better definition */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+
+.autocomplete-item {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.autocomplete-item:hover {
+  background-color: #f5f7fa;   /* light grey hover */
+}
+
+/* board horizontal scroll */
+
+.kanban-card {
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kanban-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.kanban-drop-hover {
+  background-color: #e9f2ff !important;
+  border: 2px dashed #0d6efd;
+}
+
+
+.kanban-column-body {
+  scrollbar-width: thin;                /* Firefox */
+  scrollbar-color: #c1c7cd transparent;
+}
+
+/* Chrome, Edge, Safari */
+.kanban-column-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.kanban-column-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanban-column-body::-webkit-scrollbar-thumb {
+  background-color: #c1c7cd;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.kanban-column-body::-webkit-scrollbar-thumb:hover {
+  background-color: #9aa0a6;
+}
+.bg-lightgray{
+    /*background-color: lightgray !important;*/
+    background-color: hsl(200 8.57% 93.14%);
+
+}
+
+
+/* Reset padding for Level 2 and Level 3 when sidebar is collapsed */
+.sidebar-collapse .main-sidebar .nav-sidebar .nav-treeview .nav-link {
+    padding-left: 0.8rem !important; /* Standard AdminLTE mini-sidebar padding */
+}
+
+/* Maintain hierarchy padding ONLY when sidebar is expanded */
+/* Targeting body WITHOUT .sidebar-collapse */
+body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-treeview .nav-link[style*="paddingLeft: 30px"] {
+    padding-left: 30px !important;
+}
+
+body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-treeview .nav-link[style*="paddingLeft: 50px"] {
+    padding-left: 50px !important;
+}
+
+/* Container styling */
+.sidebar {
+  height: calc(100vh - 120px); /* Adjust based on your header height */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 80px; /* The bottom padding you requested */
+}
+
+/* 1. The Scrollbar container */
+.sidebar::-webkit-scrollbar {
+  width: 6px; /* Very thin */
+}
+
+/* 2. The Track (the background of the scrollbar) */
+.sidebar::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+/* 3. The Handle (the draggable part) */
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15); /* Light grey/transparent */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+/* 4. Handle on hover */
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3); /* Darkens when user interacts */
+}
+
+/* Firefox Support */
+.sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.form-control-soft {
+  border-color: #f1f3f5;
+}
+
+.form-control-soft:focus {
+  border-color: #adb5bd;
+  box-shadow: none;
+}
+.tippy-box[data-theme~="custom-gray"] {
+  background-color: #747475;  
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.tippy-box[data-theme~="custom-gray"] .tippy-arrow {
+  color: #747475;
+}
+
+.date-display {
+  display: inline-block;        /* important */
+  width: auto;                  /* prevent full width */
+  border: none;
+  border-bottom: 1px dotted #6c757d;
+  background: transparent;
+  padding: 2px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #212529;
+}
+
+.date-display:focus {
+  outline: none;
+  border-bottom: 1px solid #212529;
+}
+
+
+
+/* Smooth underline transition for Tabs */
+.custom-tabs.nav-tabs {
+  border-bottom: 2px solid #f0f0f0;
+  padding-top:5px;padding-bottom:6px;
+}
+
+.custom-tabs .nav-link {
+  border: none !important;
+  color: #6c757d;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.custom-tabs .nav-link.active {
+  color: #0d6efd !important;
+  background: none !important;
+}
+
+/* The sliding line effect */
+.custom-tabs .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #0d6efd;
+  transition: width 0.3s ease-in-out;
+}
+
+.custom-tabs .nav-link.active::after {
+  width: 100%;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+    text-transform: uppercase !important;
+}
+
+.tabulator {
+    margin-top: -4px !important;
+    margin-bottom: 0px !important;
+}
+
+
+/* கியர் அனிமேஷன் ரேப்பர் (Wrapper) */
+.gear-loader-wrapper {
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+
+/* பெரிய கியர் - கடிகாரச் சுற்றில் சுழலும் (Clockwise) */
+.gear-big {
+  font-size: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: spinClockwise 2s linear infinite;
+}
+
+/* சிறிய கியர் - கடிகாரத்திற்கு எதிர்ச் சுற்றில் சுழலும் (Anti-clockwise) */
+.gear-small {
+  font-size: 35px;
+  position: absolute;
+  top: 35px;
+  left: 35px;
+  animation: spinAntiClockwise 2s linear infinite;
+  opacity: 0.8; /* சற்று மங்கலாக */
+}
+
+/* அனிமேஷன் கீபிரேம்கள் (Keyframes) */
+@keyframes spinClockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spinAntiClockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+/* மூன்று புள்ளிகள் அனிமேஷன் (Dots) */
+.dot-pulse {
+  animation: pulse 1.5s infinite;
+  opacity: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+.input-readonly-dotted {
+  cursor: not-allowed !important;
+  /* Dashed பார்டர் */
+  border: 1px dashed #ced4da !important; 
+  /* Gray Background */
+  background-color: #f4f6f9 !important; 
+  color: #6c757d !important; /* மங்கலான டெக்ஸ்ட் நிறம் */
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Focus செய்தாலும் அதே நிறம் மாறாமல் இருக்க */
+.input-readonly-dotted:focus,
+.input-readonly-dotted:active {
+  background-color: #f4f6f9 !important;
+  border: 1px dashed #ced4da !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.react-datepicker-popper {
+    z-index: 9999 !important;
+}
+
+/* மாடலில் காலண்டர் வெட்டப்படாமல் இருக்க */
+.react-datepicker-popper {
+    z-index: 10000 !important; /* மாடலை விட அதிக z-index */
+}
+
+.btn-outline-light-clear {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #6b7280;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+.btn-outline-light-clear:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.shipment-status {
+  display: inline-block;
+  background-color: #ffffff;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  border-radius: 14px;
+  line-height: 16px;
+  padding: 2px 8px;
+  margin-top: 2px;
+  border: 2px solid;
+  letter-spacing: 0.4px;
+}
+
+/* PARKED / Pending (Orange) */
+.shipment-status.Parked,
+.shipment-status.Pending {
+  border-color: #f06e23;
+  color: #f06e23;
+}
+
+/* PLACED (Blue) */
+.shipment-status.Placed {
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+}
+
+/* SHIPPED (Teal/Green mix) */
+.shipment-status.Shipped {
+  border-color: #14b8a6;
+  color: #14b8a6;
+}
+
+/* DELIVERED (Green) */
+.shipment-status.Delivered {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+/* CANCELLED (Red) */
+.shipment-status.Cancelled {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+/* RETURNED (Gray) */
+.shipment-status.Returned {
+  border-color: #6b7280;
+  color: #6b7280;
+}
+
+/* RETURNED (Gray) */
+
+.btn-group{
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-group .btn{
+  height: 37px;padding-left: 14px;
+  line-height: 0px;
+}
+
+.btn-group .dropdown-toggle-split{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#save-split-btn + .dropdown-menu{
+  min-width: 92px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.po-save-dropdown .dropdown-toggle::after{
+  transition: transform 0.2s ease;
+}
+/* rotate arrow when dropdown opens */
+.po-save-dropdown.show .dropdown-toggle::after{
+  transform: rotate(180deg);
+}
+.po-save-dropdown .dropdown-menu{
+  transform: none !important;   /* remove bootstrap popper shifting */
+  inset: unset !important;      /* reset popper auto position */
+  top: 100% !important;         /* directly below */
+  left: 0 !important;           /* align left edge */
+  margin-top: -5px;              /* small gap */
+}
+#save-split-btn + .dropdown-menu .dropdown-item{
+  color: #333;
+}
+/* hover light grey */
+#save-split-btn{
+  position: relative;
+} 
+#save-split-btn + .dropdown-menu .dropdown-item:hover{
+  background-color: #cfcfd1 !important;color:#1c7430 !important;
+}
+#save-split-btn + .dropdown-menu{
+  padding-top:0px;
+  padding-bottom:0px;
+    
+}
+#save-split-btn + .dropdown-menu .dropdown-item{
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+#save-split-btn + .dropdown-menu .dropdown-item:hover{
+  background-color: #f1f3f5;
+}
+/* RECEIVE BUTTON */
+.btn-receive{
+  background-color: #007373;
+  border-color: #007373;
+  color: #fff;
+}
+.btn-receive:focus,
+.btn-placed:focus{
+  color: #fff;
+}
+.btn-placed:active{
+    background-color: #0c55a5 !important;color:white !important;
+}
+.btn-receive:active{
+  background-color: #007373 !important;
+  color:white !important;
+}
+.btn:active{
+  border-color: white !important;
+}
+#save-split-btn:active{
+    border-color: #1e7e34 !important;
+}
+.btn-receive:hover{
+  background-color: #006666;
+  color: #ffffff;
+}
+/* PLACED BUTTON */
+.btn-placed{
+  background-color: #0c55a5;
+  border-color: #0c55a5;
+  color: #fff;
+}
+.btn-placed:hover{
+  color: #ffffff;
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+.po-total-table td{
+  font-size: 16px;
+  font-weight: 600;
+}
+.po-total-table tr:last-child td{
+  font-size: 18px;
+  font-weight: 700;
+}
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: linear-gradient(90deg, #ff9933, #ff6f00) !important;
+  position: fixed;
+  z-index: 999999 !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px !important;
+  box-shadow: none !important;
+}
+
+#nprogress .peg {
+  display: none;
+}
+
+/* Hide spinner */
+#nprogress .spinner {
+  display: none;
+}
+
+.btn{
+   max-height: 43px;  
+}
+
+.page-bg {
+  background: linear-gradient(to bottom, #ffffff, #f2f2f2);
+  min-height: 100vh;
+}
+
+.dash-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 4px 12px #0000001a;
+	/*border-color: var(--color-solid-brand-1);*/
+}
+.dash-card {
+	/*border-color: var(--color-solid-brand-1);*/
+  transition: all .2s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+
+.header-left-badge{
+  width: 32px; height: 32px; 
+  border-radius: 10px; 
+  background: rgb(237, 233, 254);
+   display: inline-flex; 
+   align-items: center; 
+   justify-content: center;
+}
+
+.overflow-auto-important{
+  overflow:auto !important;
+}
+
+
+
+

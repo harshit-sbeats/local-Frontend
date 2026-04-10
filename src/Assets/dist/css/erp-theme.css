@@ -1,0 +1,161 @@
+/* ═══════════════════════════════════════════════════
+   ERP THEME — erp-theme.css
+   Single source of truth for all list pages
+═══════════════════════════════════════════════════ */
+
+/* ── page wrapper ── */
+.cl-wrap { padding: 0; }
+
+/* ── header ── */
+.cl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.cl-title-wrap { display: flex; align-items: center; gap: 10px; }
+.cl-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: #f3f4f6;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #111827; flex-shrink: 0;
+}
+.cl-title    { font-size: 18px; font-weight: 600; color: #111827; letter-spacing: -.3px; margin: 0; }
+.cl-subtitle { font-size: 11px; font-weight: 400; color: #9ca3af; margin: 0; }
+
+/* ── buttons ── */
+.cl-search-btn {
+  padding: 7px 16px; border-radius: 8px;
+  background: #111827; color: #fff;
+  border: none; font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.cl-search-btn:hover { background: #1f2937; transform: translateY(-1px); }
+.cl-clear-btn {
+  padding: 7px 14px; border-radius: 8px;
+  background: #f3f4f6; color: #374151;
+  border: 1px solid #e5e7eb; font-size: 12px; font-weight: 400;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.cl-clear-btn:hover { background: #e5e7eb; }
+
+/* ── search bar ── */
+.cl-search-wrap {
+  background: #fff; border-radius: 12px; padding: 12px 14px;
+  border: 1px solid #e8eaf0; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+.cl-search-inner { position: relative; flex: 1; }
+.cl-search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: #9ca3af; font-size: 12px; pointer-events: none;
+}
+.cl-search-input {
+  width: 100%; border: 1px solid #e5e7eb; border-radius: 8px;
+  padding: 7px 12px 7px 32px; font-size: 13px; font-weight: 400;
+  outline: none; transition: border-color .15s; color: #111827; background: #fff;
+}
+.cl-search-input:focus { border-color: #111827; box-shadow: 0 0 0 3px rgba(17,24,39,.08); }
+
+/* ── table card ── */
+.cl-card {
+  background: #fff; border-radius: 14px;
+  border: 1px solid #e8eaf0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  overflow: hidden;
+}
+
+/* ── plain table (non-tabulator pages) ── */
+.cl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cl-table thead th {
+  background: #f9fafb; color: #374151;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .6px;
+  padding: 11px 16px; border-bottom: 1.5px solid #e5e7eb;
+  white-space: nowrap;
+}
+.cl-table tbody tr { border-bottom: 1px solid #f3f4f6; transition: background .1s; }
+.cl-table tbody tr:last-child { border-bottom: none; }
+.cl-table tbody tr:hover { background: #f9fafb; }
+.cl-table tbody td { padding: 12px 16px; color: #374151; font-weight: 400; }
+
+.cl-td-name { font-weight: 600; color: #111827; font-size: 13.5px; }
+.cl-td-code { font-size: 12px; color: #6b7280; font-weight: 400; font-family: monospace; letter-spacing: .5px; }
+
+/* ── badges ── */
+.cl-badge-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 32px; padding: 3px 10px;
+  border-radius: 20px; font-size: 12px; font-weight: 500;
+  background: #f3f4f6; color: #111827;
+}
+.cl-badge-active   { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; background: #dcfce7; color: #15803d; }
+.cl-badge-inactive { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; background: #fee2e2; color: #b91c1c; }
+.cl-badge-default  { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; background: #f3f4f6; color: #374151; }
+
+/* ── action buttons ── */
+.cl-edit-btn {
+  padding: 5px 12px; border-radius: 7px;
+  border: 1px solid #e5e7eb; background: #f9f9fb;
+  cursor: pointer; font-size: 12px; font-weight: 400; color: #374151;
+  transition: all .12s; margin-right: 5px;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.cl-edit-btn:hover { background: #111827; color: #fff; border-color: #111827; }
+
+.cl-del-btn {
+  padding: 5px 10px; border-radius: 7px;
+  border: 1px solid #fecaca; background: #fff5f5;
+  cursor: pointer; font-size: 12px; font-weight: 400; color: #dc2626;
+  transition: all .12s; display: inline-flex; align-items: center; gap: 5px;
+}
+.cl-del-btn:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+/* ── loading / empty ── */
+.cl-state-cell { padding: 52px 0; text-align: center; color: #9ca3af; font-size: 13px; font-weight: 400; }
+.cl-state-icon { font-size: 28px; opacity: .2; margin-bottom: 10px; }
+.cl-spinner {
+  display: inline-block; width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #e5e7eb; border-top-color: #111827;
+  animation: cl-spin .7s linear infinite; vertical-align: middle; margin-right: 8px;
+}
+@keyframes cl-spin { to { transform: rotate(360deg); } }
+
+/* ── pagination ── */
+.cl-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-top: 1px solid #f0f0f5;
+  flex-wrap: wrap; gap: 8px;
+}
+.cl-pagination-info { font-size: 12px; font-weight: 400; color: #9ca3af; }
+.cl-pager { display: flex; align-items: center; gap: 4px; }
+.cl-ppage {
+  width: 30px; height: 30px; border: none; background: none;
+  border-radius: 7px; font-size: 12px; font-weight: 400; cursor: pointer;
+  color: #6b7280; transition: background .1s;
+}
+.cl-ppage:hover:not(:disabled) { background: #f3f4f6; color: #111827; }
+.cl-ppage:disabled { opacity: .35; cursor: default; }
+.cl-ppage-active {
+  background: #111827 !important; color: #fff !important;
+  font-weight: 500; border-radius: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════
+   TABULATOR BLACK THEME
+   Use .tbl-purple on wrapper div
+═══════════════════════════════════════════════════ */
+.tbl-purple .tabulator                     { border: none !important; font-size: 13px !important; font-weight: 400 !important; }
+.tbl-purple .tabulator-header              { background: #f9fafb !important; border-bottom: 1.5px solid #e5e7eb !important; }
+.tbl-purple .tabulator-col                 { border-right: none !important; }
+.tbl-purple .tabulator-col-title           { font-size: 11px !important; font-weight: 600 !important; color: #374151 !important; text-transform: uppercase !important; letter-spacing: .6px !important; }
+.tbl-purple .tabulator-row                 { border-bottom: 1px solid #f3f4f6 !important; transition: background .1s !important; }
+.tbl-purple .tabulator-row:hover           { background: #f9fafb !important; }
+.tbl-purple .tabulator-row .tabulator-cell { padding: 12px 16px !important; border-right: none !important; font-weight: 400 !important; color: #374151 !important; }
+.tbl-purple .tabulator-footer              { background: #fff !important; border-top: 1px solid #e5e7eb !important; }
+.tbl-purple .tabulator-page                { border-radius: 7px !important; font-size: 12px !important; font-weight: 400 !important; }
+.tbl-purple .tabulator-page.active         { background: #111827 !important; color: #fff !important; border-color: #111827 !important; font-weight: 500 !important; }
+
+
