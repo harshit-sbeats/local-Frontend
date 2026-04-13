@@ -7,9 +7,9 @@ import { API_BASE } from "../../../Config/api";
 import { apiFetch } from "../../../Utils/apiFetch";
 import { showErrorToast } from "../../../Utils/utilFunctions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import {
     faListUl, faUpload, faFileCsv, faTimes, faFileAlt, faFileExcel,
-    faFileImport, faCheckCircle, faExclamationTriangle, faUndo, faSave, faDownload 
+    faFileImport, faCheckCircle, faExclamationTriangle, faUndo, faSave, faDownload
 } from '@fortawesome/free-solid-svg-icons';
 import StickyHeader from "../../../Components/Common/StickyHeader";
 import Swal from "sweetalert2";
@@ -41,7 +41,7 @@ const VendorImportIndex = () => {
                 responseType: 'blob'
             });
 
-            const blob = new Blob([res.data], { 
+            const blob = new Blob([res.data], {
                 type: res.headers['content-type'] || (format === 'xl' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv')
             });
 
@@ -54,11 +54,11 @@ const VendorImportIndex = () => {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
-            toast.success("Vendor data exported!",{
+            toast.success("Vendor data exported!", {
                 position: "bottom-center",
             });
         } catch (err) {
-            showErrorToast("Download failed",{
+            showErrorToast("Download failed", {
                 position: "bottom-center",
             });
         } finally {
@@ -76,7 +76,7 @@ const VendorImportIndex = () => {
                 responseType: 'blob'
             });
 
-            const blob = new Blob([res.data], { 
+            const blob = new Blob([res.data], {
                 type: res.headers['content-type'] || (format === 'xl' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv')
             });
 
@@ -89,11 +89,11 @@ const VendorImportIndex = () => {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
-            toast.success("Template downloaded!",{
+            toast.success("Template downloaded!", {
                 position: "bottom-center",
             });
         } catch (err) {
-            showErrorToast("Download failed",{
+            showErrorToast("Download failed", {
                 position: "bottom-center",
             });
         } finally {
@@ -124,13 +124,13 @@ const VendorImportIndex = () => {
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("import_type", importType);
-        formData.append("duplicate_action", duplicateAction); 
+        formData.append("duplicate_action", duplicateAction);
         setProcessing(true);
         try {
             const res = await apiFetch(`${API_BASE}api/vendor/api/pre-import-check`, {
                 method: "POST",
                 body: formData,
-                isFormData: true 
+                isFormData: true
             });
             if (res.status) {
                 setImportSummary(res.data);
@@ -168,9 +168,9 @@ const VendorImportIndex = () => {
         try {
             const res = await apiFetch(`${API_BASE}api/vendor/api/confirm-import/`, {
                 method: "POST",
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     file_id: importSummary.file_id,
-                    import_type: importType ,
+                    import_type: importType,
                     duplicate_action: duplicateAction
                 })
             });
@@ -193,8 +193,8 @@ const VendorImportIndex = () => {
                     confirmButtonText: "OK",
                     confirmButtonColor: "#000000"
                 }).then((result) => {
-                   if (result.isConfirmed) {
-                    navigate("/vendor/vendors");
+                    if (result.isConfirmed) {
+                        navigate("/vendor/vendors");
                     }
                 });
 
@@ -225,10 +225,10 @@ const VendorImportIndex = () => {
                     </h5>
                     <div className="d-flex gap-2">
                         <div className="dropdown">
-                            <button 
-                                className="btn btn-success dropdown-toggle" 
-                                type="button" 
-                                data-bs-toggle="dropdown" 
+                            <button
+                                className="btn btn-success dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
                                 aria-expanded="false"
                                 disabled={isDownloading}
                             >
@@ -237,20 +237,20 @@ const VendorImportIndex = () => {
                             </button>
                             <ul className="dropdown-menu">
                                 <li>
-                                <button 
-                                    className="dropdown-item" 
-                                    onClick={() => handleExportVendors('csv')}
-                                >
-                                    Export Vendor Data (CSV)
-                                </button>
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => handleExportVendors('csv')}
+                                    >
+                                        Export Vendor Data (CSV)
+                                    </button>
                                 </li>
                                 <li>
-                                <button 
-                                    className="dropdown-item" 
-                                    onClick={() => handleExportVendors('xl')}
-                                >
-                                    Export Vendor Data (Excel)
-                                </button>
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => handleExportVendors('xl')}
+                                    >
+                                        Export Vendor Data (Excel)
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -272,6 +272,24 @@ const VendorImportIndex = () => {
                         <span className={`me-2 rounded-circle border px-3 py-2 ${step === 2 ? 'bg-primary text-white border-primary' : ''}`}>2</span> Preview & Verify
                     </div>
                 </div>
+
+                {/* Tabs below Stepper */}
+                <div className="d-flex justify-content-center gap-2 py-3  bg-white">
+                    <Button
+                        variant="primary"
+                        className="px-3 shadow-sm"
+                    >
+                        Vendor Details
+                    </Button>
+
+                    <Button
+                        variant="outline-primary"
+                        className="px-3 shadow-sm"
+                    >
+                        Vendor Contacts
+                    </Button>
+                </div>
+
 
                 <div className="p-4">
                     {step === 1 ? (
@@ -304,52 +322,52 @@ const VendorImportIndex = () => {
                                     </div>
                                 </Col>
                                 <Col md="6">
-                                        <div className="card p-2">
-                                            <div className="card-header">
-                                                 <h6 className="fw-bold mb-2">How should duplicate records be handled?</h6>
-                                         
-                                            </div>
+                                    <div className="card p-2">
+                                        <div className="card-header">
+                                            <h6 className="fw-bold mb-2">How should duplicate records be handled?</h6>
 
-                                            <div className="card-body pt-3 ps-3 pb-0">
-                                                <div className="mb-3">
-                                                   <div className="form-check icheck-primary d-inline">
-                                            <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="duplicate_action"
-                                            id="skip_duplicates"
-                                            value="skip"
-                                            checked={duplicateAction === "skip"}
-                                            onChange={(e) => setDuplicateAction(e.target.value)}
-                                            />
-                                            <label className="form-check-label" htmlFor="skip_duplicates">
-                                            Skip duplicate records
-                                            </label>
                                         </div>
-                                        </div>
-                                        <div className="mb-3">
-                                        <div className="form-check icheck-primary d-inline">
-                                            <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="duplicate_action"
-                                            id="update_duplicates"
-                                            value="update"
-                                            checked={duplicateAction === "update"}
-                                            onChange={(e) => setDuplicateAction(e.target.value)}
-                                            />
-                                            <label className="form-check-label" htmlFor="update_duplicates">
-                                            Update duplicate records
-                                            </label>
-                                        </div></div>
 
+                                        <div className="card-body pt-3 ps-3 pb-0">
+                                            <div className="mb-3">
+                                                <div className="form-check icheck-primary d-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="duplicate_action"
+                                                        id="skip_duplicates"
+                                                        value="skip"
+                                                        checked={duplicateAction === "skip"}
+                                                        onChange={(e) => setDuplicateAction(e.target.value)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="skip_duplicates">
+                                                        Skip duplicate records
+                                                    </label>
+                                                </div>
                                             </div>
+                                            <div className="mb-3">
+                                                <div className="form-check icheck-primary d-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="duplicate_action"
+                                                        id="update_duplicates"
+                                                        value="update"
+                                                        checked={duplicateAction === "update"}
+                                                        onChange={(e) => setDuplicateAction(e.target.value)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="update_duplicates">
+                                                        Update duplicate records
+                                                    </label>
+                                                </div></div>
+
+                                        </div>
 
                                         <div className="card-footer">
                                             <small className="text-muted d-block mb-2">
-                                                Duplicate detection rules:<br/>
-                                                • Validation requires Vendor Code, Vendor Name, and Company Name.<br/>
-                                                • Duplicate detection checks Vendor Code, Vendor Name, and Company Name.<br/>
+                                                Duplicate detection rules:<br />
+                                                • Validation requires Vendor Code, Vendor Name, and Company Name.<br />
+                                                • Duplicate detection checks Vendor Code, Vendor Name, and Company Name.<br />
                                                 • If you choose update, related details like addresses, contacts, and bank records are refreshed from the file.
                                             </small>
                                         </div>
@@ -357,14 +375,14 @@ const VendorImportIndex = () => {
                                 </Col>
 
                             </Row>
-                            
+
 
 
                             <div className="d-flex justify-content-between mt-4">
                                 {/* Format Dropdown Template Button */}
                                 <Dropdown as={ButtonGroup} size="sm">
                                     <Button variant="link" className="text-decoration-none text-dark fw-bold p-0" disabled={isDownloading}>
-                                        <FontAwesomeIcon icon={faDownload} className="me-1 text-success" /> 
+                                        <FontAwesomeIcon icon={faDownload} className="me-1 text-success" />
                                         Get Vendor Template
                                     </Button>
                                     <Dropdown.Toggle split variant="link" className="text-success p-0 ms-2" id="dropdown-split-basic" />
@@ -379,7 +397,7 @@ const VendorImportIndex = () => {
                                 </Dropdown>
 
                                 <Button variant="primary" className="px-4 shadow-sm" disabled={!selectedFile || processing} onClick={handleInitialUpload}>
-                                    {processing ? <><Spinner size="sm" className="me-2"/>Validating...</> : "Next: Preview Data"}
+                                    {processing ? <><Spinner size="sm" className="me-2" />Validating...</> : "Next: Preview Data"}
                                 </Button>
                             </div>
                         </div>
@@ -388,7 +406,7 @@ const VendorImportIndex = () => {
                         <div className="animate__animated animate__fadeIn">
                             <div className="row mb-4">
                                 <div className="col-md-8">
-                                    <h6 className="fw-bold mb-3"><FontAwesomeIcon icon={faCheckCircle} className="text-success me-2"/> Preview (Top Records)</h6>
+                                    <h6 className="fw-bold mb-3"><FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" /> Preview (Top Records)</h6>
                                     <Table responsive bordered size="sm" className="small align-middle">
                                         <thead className="table-light text-uppercase" style={{ fontSize: "11px" }}>
                                             <tr>
@@ -425,8 +443,8 @@ const VendorImportIndex = () => {
                             {/* ERROR LOG SECTION */}
                             {importSummary.errors.length > 0 && (
                                 <div className="mb-4">
-                                    <h6 className="fw-bold text-danger small"><FontAwesomeIcon icon={faExclamationTriangle} className="me-2"/> Validation Error Log</h6>
-                                    <div className="border border-danger-subtle rounded bg-danger-light p-2" style={{maxHeight: '160px', overflowY: 'auto'}}>
+                                    <h6 className="fw-bold text-danger small"><FontAwesomeIcon icon={faExclamationTriangle} className="me-2" /> Validation Error Log</h6>
+                                    <div className="border border-danger-subtle rounded bg-danger-light p-2" style={{ maxHeight: '160px', overflowY: 'auto' }}>
                                         {importSummary.errors.map((err, i) => (
                                             <div key={i} className="text-danger small border-bottom border-danger-subtle py-1">
                                                 <strong>Row {err.row}:</strong> Column "{err.column}" — {err.message}
@@ -438,16 +456,16 @@ const VendorImportIndex = () => {
 
                             <div className="d-flex justify-content-between border-top pt-3">
                                 <Button variant="outline-secondary" size="md" onClick={handleReset}>
-                                    <FontAwesomeIcon icon={faUndo} className="me-1"/> Cancel & Reset
+                                    <FontAwesomeIcon icon={faUndo} className="me-1" /> Cancel & Reset
                                 </Button>
-                                <Button 
-                                    variant="success" 
+                                <Button
+                                    variant="success"
                                     size="md"
                                     className="px-4 shadow-sm"
                                     disabled={importSummary.valid_count === 0 || isConfirming}
                                     onClick={handleFinalConfirm}
                                 >
-                                    {isConfirming ? <Spinner size="sm" className="me-2"/> : <FontAwesomeIcon icon={faSave} className="me-2"/>}
+                                    {isConfirming ? <Spinner size="sm" className="me-2" /> : <FontAwesomeIcon icon={faSave} className="me-2" />}
                                     Confirm & Import {importSummary.valid_count} Records
                                 </Button>
                             </div>
