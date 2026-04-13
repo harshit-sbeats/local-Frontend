@@ -6,11 +6,58 @@ import { API_BASE, API_ENDPOINTS } from "../../../Config/api";
 import DateInput from "../../Common/DateInput";
 import formatCurrency, { formatToISODate } from "../../../Utils/utilFunctions";
 
-const calculateDueDate = (invoiceDate, frequency) => {
-  if (!invoiceDate) return "";
-  const date = new Date(invoiceDate);
-  date.setDate(date.getDate() + Number(frequency || 0));
-  return date.toISOString().split("T")[0];
+const toDateOnly = (value) => {
+  if (!value) return null;
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [y, m, d] = value.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+};
+
+const formatLocalDate = (dateObj) => {
+  const yyyy = dateObj.getFullYear();
+  const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const dd = String(dateObj.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+const addMonths = (dateValue, months) => {
+  const d = new Date(dateValue);
+  return new Date(d.getFullYear(), d.getMonth() + months, 1);
+};
+
+const lastDayOfMonth = (dateValue) => {
+  const d = new Date(dateValue);
+  return new Date(d.getFullYear(), d.getMonth() + 1, 0);
+};
+
+const calculateDueDate = (invoiceDate, selectedTerm) => {
+  const date = toDateOnly(invoiceDate);
+  if (!date || !selectedTerm) return "";
+
+  const key = String(selectedTerm.name || "").trim().toLowerCase();
+  let result = null;
+
+  if (key.includes("last day of next to next month") || key.includes("last date of next to next month") || key.includes("last day of next to next months")) {
+    result = lastDayOfMonth(addMonths(date, 2));
+  } else if (key.includes("last day of next month") || key.includes("last date of next month")) {
+    result = lastDayOfMonth(addMonths(date, 1));
+  } else if (key.includes("14th of next month")) {
+    const nextMonth = addMonths(date, 1);
+    result = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 14);
+  } else {
+    const byFrequency = new Date(date);
+    byFrequency.setDate(byFrequency.getDate() + Number(selectedTerm.frequency || 0));
+    result = byFrequency;
+  }
+
+  return formatLocalDate(result);
 };
 
 const InvoiceModel = ({ poId, setShowModal, preferredPaymentId, onSuccess, maxInvoice, editData = null }) => {
@@ -49,7 +96,7 @@ const InvoiceModel = ({ poId, setShowModal, preferredPaymentId, onSuccess, maxIn
   useEffect(() => {
     if (!isEdit && preferredPaymentId && paymentTerms?.length) {
       const selectedTerm = paymentTerms.find((t) => String(t.id) === String(preferredPaymentId));
-      const newDueDate   = selectedTerm ? calculateDueDate(formData.invoice_date, selectedTerm.frequency) : "";
+      const newDueDate   = selectedTerm ? calculateDueDate(formData.invoice_date, selectedTerm) : "";
       //  type based auto status
       const autoStatus   = selectedTerm?.type === 1 ? "1"
                          : selectedTerm?.type === 2 ? "2"
@@ -139,7 +186,7 @@ const InvoiceModel = ({ poId, setShowModal, preferredPaymentId, onSuccess, maxIn
                       const termId       = e.target.value;
                       const selectedTerm = paymentTerms.find((t) => String(t.id) === String(termId));
                       const newDueDate   = selectedTerm
-                        ? calculateDueDate(formData.invoice_date, selectedTerm.frequency)
+                        ? calculateDueDate(formData.invoice_date, selectedTerm)
                         : "";
                       //  Prepaid → Paid, Postpaid → Unpaid
                       const autoStatus   = selectedTerm?.type === 1 ? "1"
@@ -190,7 +237,7 @@ const InvoiceModel = ({ poId, setShowModal, preferredPaymentId, onSuccess, maxIn
                       const selectedTerm = paymentTerms?.find((t) => String(t.id) === String(formData.payment_term_id));
                       //  frequency=0 ஆனாலும் same date return
                       const newDueDate   = selectedTerm
-                        ? calculateDueDate(value, selectedTerm.frequency)
+                        ? calculateDueDate(value, selectedTerm)
                         : formData.due_date;
                       setFormData({ ...formData, invoice_date: value, due_date: newDueDate });
                     }}

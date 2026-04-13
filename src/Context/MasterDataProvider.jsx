@@ -44,7 +44,7 @@ export const MasterDataProvider = ({ children }) => {
       ]);
 
       const freshData = {
-        vendors: vData?.data || [],
+        vendors: Array.isArray(vData) ? vData : (vData?.data || []),
         countries: cData?.results || [],
         warehouses: wData?.data || [],
         shippingProviders: sData?.data || [],

@@ -92,10 +92,10 @@ const EditVendor = () => {
                         <Tab eventKey="primary" title="Primary Details">
                             <PrimaryDetailsTab primary={primary} setPrimary={setPrimary} />
                         </Tab>
-                        <Tab eventKey="vendor_warehouse" title="Warehouse Details">
+                        <Tab eventKey="vendor_warehouse" title="Vendor Details">
                             <WarehouseTab vendorId={vendorId} />
                         </Tab>
-                        <Tab eventKey="address" title="Address Details">
+                        <Tab eventKey="address" title="Shopperbeats Address Details">
                             <AddressTab vendorId={vendorId} />
                         </Tab>
                         <Tab eventKey="contact" title="Contact Details">

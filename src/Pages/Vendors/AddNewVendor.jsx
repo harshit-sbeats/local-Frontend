@@ -237,7 +237,7 @@ const AddNewVendor = () => {
     const [saving, setSaving] = useState(false);
     const [activeTab, setActiveTab] = useState("primary");
     const { paymentTerms, warehouses, countries } = useMasterData();
-    const [activePaymentView, setActivePaymentView] = useState("paypal");
+    const [activePaymentView, setActivePaymentView] = useState("bank_transfer");
     const { register, flushAll } = useFlushRegistry();
 
     const [formData, setFormData] = useState({
@@ -257,16 +257,16 @@ const AddNewVendor = () => {
         company_locality: "",
 
         payment_term: "",
-        mode_of_payment: [],
+        mode_of_payment: ["bank_transfer"],
         paypal_notes: "",
         wallet_notes: "",
         credit_card_notes: "",
         bank_name: "",
-        bank_branch: "",
         bank_account_holder_name: "",
         bank_ifsc: "",
         bank_country: "",
         bank_account_number:"",
+        bank_account_number_confirm:"",
         first_contact_date: "",
         first_contact_via: "",   
         onboard_date: "",
@@ -311,10 +311,17 @@ const AddNewVendor = () => {
 
         if (hasBankTransfer) {
             if (!fd.bank_name?.trim()) missing.push("Bank Name");
-            if (!fd.bank_branch?.trim()) missing.push("Bank Branch");
             if (!fd.bank_account_holder_name?.trim()) missing.push("Bank Account Holder Name");
             if (!fd.bank_ifsc?.trim()) missing.push("BSB / IFSC / SWIFT Code");
             if (!fd.bank_account_number?.trim()) missing.push("Bank Account Number");
+            if (!fd.bank_account_number_confirm?.trim()) missing.push("Re-enter Account Number");
+            if (
+                fd.bank_account_number?.trim() &&
+                fd.bank_account_number_confirm?.trim() &&
+                fd.bank_account_number.trim() !== fd.bank_account_number_confirm.trim()
+            ) {
+                missing.push("Bank Account Number mismatch");
+            }
         }
 
         return missing;
@@ -602,7 +609,7 @@ const AddNewVendor = () => {
 
                             {/* Payment Details Tab */}
                             <Tab eventKey="payment" title="Payment Details">
-                                <VendorPaymentForm data={formData} onChange={setFormData} paymentTerms={paymentTerms} />
+                                <VendorPaymentForm data={formData} onChange={setFormData} paymentTerms={paymentTerms} countries={countries} />
                             </Tab>
 
                             {/* Onboard Details Tab */}

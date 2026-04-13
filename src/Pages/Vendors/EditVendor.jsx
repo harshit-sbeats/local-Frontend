@@ -63,6 +63,7 @@ const EditVendor = () => {
         bank_ifsc:"",
         bank_country:"",
         bank_account_number:"",
+        bank_account_number_confirm:"",
     });
 
     const [vendorWarehouses, setVendorWarehouses] = useState([]);
@@ -78,7 +79,16 @@ const EditVendor = () => {
 
     const [billingAddress, setBillingAddress] = useState({ attention: "", country: "", street1: "", street2: "", city: "", state: "", zip: "", phone: "", fax: "" });
     const [shippingAddress, setShippingAddress] = useState({ attention: "", country: "", street1: "", street2: "", city: "", state: "", zip: "", phone: "", fax: "" });
-    const [tempContact, setTempContact] = useState({ first_name: "", last_name: "",  email: "", phone: "", department: "", description: "", country_id: "" });
+    const [tempContact, setTempContact] = useState({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        mobile_no: "",
+        department: "",
+        description: "",
+        is_primary: false
+    });
     const [tempWarehouse, setTempWarehouse] = useState({ name: "", delivery_name: "", address_line1: "", address_line2: "", city: "", state_id: "", zip:"", country_id:"" });
 
     const [documents, setDocuments] = useState([]);
@@ -92,6 +102,7 @@ const EditVendor = () => {
     const [showContactModal, setShowContactModal] = useState(false);
     const [showWarehouseModal, setShowWarehouseModal] = useState(false);
     const [warehouseStates, setWarehouseStates] = useState([]);
+    const zipRegex = /^[A-Za-z0-9\-\s]{3,12}$/;
 
     const handleDeleteFile = async (fileId) => {
         const result = await Swal.fire({
@@ -193,9 +204,19 @@ const EditVendor = () => {
     const handleSaveContact = async () => {
         const isEdit = !!tempContact.id;
         const url = isEdit ? `${API_BASE}api/vendor/contact/update/${tempContact.id}` : `${API_BASE}api/vendor/contact/addNew/${vendorId}`;
+        if (!String(tempContact.first_name || "").trim() && !String(tempContact.last_name || "").trim()) {
+            toast.error("First Name or Last Name is required");
+            return;
+        }
         try {
             const res = await apiFetch(url, { method: "POST", body: JSON.stringify(tempContact) });
-            if (res.status) { toast.success(isEdit ? "Contact updated" : "Contact added"); setShowContactModal(false); fetchContacts(); }
+            if (res.status) {
+                toast.success(isEdit ? "Contact updated" : "Contact added");
+                setShowContactModal(false);
+                fetchContacts();
+                return;
+            }
+            toast.error(res?.message || "Failed to save contact");
         } catch (err) { toast.error("Operation failed"); }
     };
 
@@ -207,16 +228,49 @@ const EditVendor = () => {
         });
         if (result.isConfirmed) {
             try {
-                const res = await apiFetch(`${API_BASE}api/vendor/contact/delete/${contactId}/${vendorId}`, { method: "POST" });
+                let res = await apiFetch(`${API_BASE}api/vendor/contact/delete/${contactId}/${vendorId}`, { method: "POST" });
+                if (!res?.status && res?.error === "primary_reassignment_required" && Array.isArray(res?.candidates) && res.candidates.length) {
+                    const options = {};
+                    res.candidates.forEach((c) => {
+                        const label = `${(c.first_name || "").trim()} ${(c.last_name || "").trim()}`.trim() || c.email || `Contact #${c.id}`;
+                        options[c.id] = label;
+                    });
+                    const pick = await Swal.fire({
+                        title: "Reassign Primary Contact",
+                        text: "Select a new primary contact before deletion.",
+                        input: "select",
+                        inputOptions: options,
+                        inputPlaceholder: "Select contact",
+                        showCancelButton: true,
+                        confirmButtonText: "Reassign & Delete",
+                        cancelButtonText: "Cancel",
+                        inputValidator: (value) => (!value ? "Please select a contact" : undefined)
+                    });
+                    if (!pick.isConfirmed || !pick.value) return;
+                    res = await apiFetch(`${API_BASE}api/vendor/contact/delete/${contactId}/${vendorId}`, {
+                        method: "POST",
+                        body: JSON.stringify({ reassignment_contact_id: pick.value })
+                    });
+                }
                 if (res.status) {
                     Swal.fire({ title: 'Deleted!', text: 'Contact has been removed.', icon: 'success', timer: 1500, showConfirmButton: false });
                     fetchContacts();
-                } else toast.error(res.message || "Delete failed");
+                } else toast.error(res?.message || "Delete failed");
             } catch (err) { toast.error("Error: Could not reach the server"); }
         }
     };
 
     const handleUpdate = async () => {
+        const modeList = Array.isArray(primary.mode_of_payment) ? primary.mode_of_payment : [];
+        if (modeList.includes("bank_transfer")) {
+            const acc = String(primary.bank_account_number || primary.account_number || "").trim();
+            const accConfirm = String(primary.bank_account_number_confirm || "").trim();
+            if (acc && accConfirm && acc !== accConfirm) {
+                toast.error("Bank account numbers do not match");
+                return;
+            }
+        }
+
         const formData = new FormData();
         if (selectedFile) formData.append("document", selectedFile);
         formData.append("vendor_id", vendorId);
@@ -249,9 +303,34 @@ const EditVendor = () => {
     const handleSaveWarehouse = async () => {
         const isEdit = !!tempWarehouse.warehouse_id;
         const url = isEdit ? `${API_BASE}api/vendor/api/vendor_warehouse/update/${tempWarehouse.warehouse_id}` : `${API_BASE}api/vendor/api/vendor_warehouse/addNew/${vendorId}`;
+
+        const validationErrors = [];
+        if (!String(tempWarehouse.address_line1 || "").trim()) validationErrors.push("Address Line 1 is required.");
+        if (!String(tempWarehouse.city || "").trim()) validationErrors.push("City is required.");
+        if (!String(tempWarehouse.country_id || "").trim()) validationErrors.push("Country is required.");
+        if (!String(tempWarehouse.state_id || "").trim()) validationErrors.push("State is required.");
+        if (!String(tempWarehouse.zip || "").trim()) validationErrors.push("ZIP Code is required.");
+        else if (!zipRegex.test(String(tempWarehouse.zip).trim())) validationErrors.push("Enter a valid ZIP Code.");
+
+        if (validationErrors.length) {
+            toast.error(validationErrors[0]);
+            return;
+        }
+
         try {
             const res = await apiFetch(url, { method: isEdit ? "PUT" : "POST", body: JSON.stringify(tempWarehouse) });
-            if (res.status) { toast.success(isEdit ? "Location updated" : "Location added"); setShowWarehouseModal(false); fetchWarehouses(); }
+            if (res.status) {
+                toast.success(isEdit ? "Vendor details updated" : "Vendor details added");
+                setShowWarehouseModal(false);
+                fetchWarehouses();
+                return;
+            }
+            if (res?.errors) {
+                const firstError = Object.values(res.errors)[0];
+                toast.error(Array.isArray(firstError) ? firstError[0] : firstError);
+                return;
+            }
+            toast.error(res?.message || "Failed to save vendor details");
         } catch (err) { toast.error("Operation failed"); }
     };
 
@@ -260,7 +339,12 @@ const EditVendor = () => {
         if (result.isConfirmed) {
             try {
                 const res = await apiFetch(`${API_BASE}api/vendor/api/vendor_warehouse/delete/${warehouseId}/${vendorId}`, { method: "DELETE" });
-                if (res.status) { toast.success("Location removed"); fetchWarehouses(); }
+                if (res.status) {
+                    toast.success("Vendor detail removed");
+                    fetchWarehouses();
+                    return;
+                }
+                toast.error(res?.message || "Unable to delete vendor detail");
             } catch (err) { toast.error("Error deleting location"); }
         }
     };
@@ -497,7 +581,7 @@ const EditVendor = () => {
                         </Tab>
 
                         <Tab eventKey="payment" title="Payment Details">
-                            <VendorPaymentForm data={primary} onChange={setPrimary} paymentTerms={paymentTerms} />
+                            <VendorPaymentForm data={primary} onChange={setPrimary} paymentTerms={paymentTerms} countries={countries} />
                         </Tab>
 
                         <Tab eventKey="onboard_details" title="Onboard Details">
@@ -569,7 +653,7 @@ const EditVendor = () => {
                             </Row>
                         </Tab>
 
-                        <Tab eventKey="vendor_warehouse" title="Warehouse Details">
+                        <Tab eventKey="vendor_warehouse" title="Vendor Details">
                             <div className="py-0 px-2 pb-1">
                                 <Button variant="link" className="p-0 text-decoration-none mb-3 float-right small"
                                     onClick={() => { setTempWarehouse({ name: "", delivery_name: "", address_line1: "", address_line2: "", city: "", state_id: "", zip:"", country_id:"" }); setShowWarehouseModal(true); }}>
@@ -602,7 +686,7 @@ const EditVendor = () => {
                             </div>
                         </Tab>
 
-                        <Tab eventKey="address" title="Address Details">
+                        <Tab eventKey="address" title="Shopperbeats Address Details">
                             <div className="text-end mb-2">
                                 <Button variant="link" size="sm" className="text-decoration-none" onClick={copyBillingAddress}><i className="fas fa-copy me-1"></i>Copy Billing to Shipping</Button>
                             </div>
@@ -615,18 +699,32 @@ const EditVendor = () => {
                         <Tab eventKey="contact" title="Contact Details">
                             <div className="py-0 px-3 pb-1">
                                 <Button variant="link" className="p-0 text-decoration-none mb-3 float-right small"
-                                    onClick={() => { setTempContact({ first_name: "", last_name: "", email: "", phone: "", role: "", description: "" }); setShowContactModal(true); }}>
+                                    onClick={() => {
+                                        setTempContact({
+                                            first_name: "",
+                                            last_name: "",
+                                            email: "",
+                                            phone: "",
+                                            mobile_no: "",
+                                            department: "",
+                                            role: "",
+                                            description: "",
+                                            is_primary: contacts.length === 0
+                                        });
+                                        setShowContactModal(true);
+                                    }}>
                                     <i className="fas fa-plus-circle me-1"></i> Add Contact
                                 </Button>
                                 <Table size="sm" bordered hover className="text-center align-middle" style={{ fontSize: '13px' }}>
                                     <thead className="table-light text-muted">
-                                        <tr><th>NAME</th><th>DEPARTMENT</th><th>EMAIL</th><th>PHONE</th><th style={{ width: '100px' }}>ACTION</th></tr>
+                                        <tr><th>TYPE</th><th>NAME</th><th>DEPARTMENT</th><th>EMAIL</th><th>PHONE</th><th>MOBILE</th><th style={{ width: '100px' }}>ACTION</th></tr>
                                     </thead>
                                     <tbody>
                                         {contacts.length > 0 ? contacts.map((c) => (
                                             <tr key={c.id}>
+                                                <td>{c.is_primary ? <span className="badge bg-primary">Primary</span> : <span className="badge bg-secondary">Secondary</span>}</td>
                                                 <td className="fw-bold">{c.first_name} {c.last_name}</td><td>{c.department}</td>
-                                                <td className="text-primary">{c.email}</td><td>{c.phone}</td>
+                                                <td className="text-primary">{c.email}</td><td>{c.phone}</td><td>{c.mobile_no}</td>
                                                 <td>
                                                     <div className="btn-group">
                                                         <Button variant="link" size="sm" className="text-success p-0 me-2" onClick={() => { setTempContact(c); setShowContactModal(true); }}><i className="fas fa-pen"></i></Button>
@@ -634,7 +732,7 @@ const EditVendor = () => {
                                                     </div>
                                                 </td>
                                             </tr>
-                                        )) : (<tr><td colSpan="5" className="py-4 text-muted">No contacts found</td></tr>)}
+                                        )) : (<tr><td colSpan="7" className="py-4 text-muted">No contacts found</td></tr>)}
                                     </tbody>
                                 </Table>
                             </div>
@@ -706,7 +804,7 @@ const EditVendor = () => {
 
                 {/* Contact Modal */}
                 <Modal show={showContactModal} onHide={() => setShowContactModal(false)} centered size="lg">
-                    <Modal.Header closeButton><Modal.Title className="h6 fw-bold">Contact Details</Modal.Title></Modal.Header>
+                    <Modal.Header closeButton><Modal.Title className="h6 fw-bold">Vendor Contact Details</Modal.Title></Modal.Header>
                     <Modal.Body className="px-4">
                         <Row className="mb-3">
                             <Col md={4}><Form.Label className="small fw-bold">First Name</Form.Label><Form.Control size="sm" value={tempContact.first_name} onChange={e => setTempContact({...tempContact, first_name: e.target.value})} /></Col>
@@ -724,8 +822,8 @@ const EditVendor = () => {
                         </Row>
                         <Row className="mb-3">
                             <Col md={4}><Form.Label className="small fw-bold">Email</Form.Label><Form.Control size="sm" value={tempContact.email} onChange={e => setTempContact({...tempContact, email: e.target.value})} /></Col>
-                            <Col md={4}><Form.Label className="small fw-bold">Phone</Form.Label><Form.Control size="sm" value={tempContact.phone} onChange={e => setTempContact({...tempContact, phone: e.target.value})} /></Col>
-                            <Col md={4}></Col>
+                            <Col md={4}><Form.Label className="small fw-bold">Phone No.</Form.Label><Form.Control size="sm" value={tempContact.phone} onChange={e => setTempContact({...tempContact, phone: e.target.value})} /></Col>
+                            <Col md={4}><Form.Label className="small fw-bold">Mobile No.</Form.Label><Form.Control size="sm" value={tempContact.mobile_no || ""} onChange={e => setTempContact({...tempContact, mobile_no: e.target.value})} /></Col>
                         </Row>
                         <Form.Group>
                             <Form.Label className="small fw-bold">Description</Form.Label>
@@ -733,14 +831,22 @@ const EditVendor = () => {
                         </Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
+                        <Form.Check
+                            type="switch"
+                            id="contact-make-primary"
+                            label="Make Primary"
+                            checked={!!tempContact.is_primary}
+                            onChange={(e) => setTempContact({ ...tempContact, is_primary: e.target.checked })}
+                            className="me-auto"
+                        />
                         <Button variant="secondary" size="sm" onClick={() => setShowContactModal(false)}>Cancel</Button>
-                        <Button variant="primary" size="sm" onClick={() => { handleSaveContact(); fetchContacts(); }}>Save</Button>
+                        <Button variant="primary" size="sm" onClick={handleSaveContact}>Save</Button>
                     </Modal.Footer>
                 </Modal>
 
                 {/* Warehouse Modal */}
                 <Modal show={showWarehouseModal} onHide={() => setShowWarehouseModal(false)} centered size="lg">
-                    <Modal.Header closeButton><Modal.Title className="h6 fw-bold">Warehouse / Location Details</Modal.Title></Modal.Header>
+                    <Modal.Header closeButton><Modal.Title className="h6 fw-bold">Vendor Details / Location</Modal.Title></Modal.Header>
                     <Modal.Body className="px-4">
                         <Row className="mb-3">
                             <Col md={6}><Form.Label className="small fw-bold">Warehouse Name</Form.Label><Form.Control size="sm" value={tempWarehouse.name} onChange={e => setTempWarehouse({...tempWarehouse, name: e.target.value})} placeholder="Main Warehouse" /></Col>
@@ -773,7 +879,7 @@ const EditVendor = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" size="sm" onClick={() => setShowWarehouseModal(false)}>Cancel</Button>
-                        <Button variant="primary" size="sm" onClick={handleSaveWarehouse}>Save Location</Button>
+                        <Button variant="primary" size="sm" onClick={handleSaveWarehouse}>Save Vendor Details</Button>
                     </Modal.Footer>
                 </Modal>
             </div>

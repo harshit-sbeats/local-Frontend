@@ -57,7 +57,7 @@ const PurchaseOrderForm = () => {
   const qtyInputRef = useRef(null);
   const location    = useLocation();
   const isAddNew    = location.pathname.endsWith('/AddNew');
-  const { vendors, warehouses, countries, refreshMasterData } = useMasterData();
+  const { vendors, warehouses, countries, refreshMasterData, loading: masterLoading, error: masterError } = useMasterData();
 
   const [loading, setLoading]                                   = useState(true);
   const [deliveryForm, setDeliveryForm]                         = useState({ delivery_name:"", address_line1:"", address_line2:"", city:"", state:"", zip:"", country:"" });
@@ -136,11 +136,21 @@ const PurchaseOrderForm = () => {
 
   useEffect(() => {
     const fetchPoData = async () => {
-      if (!poId || vendors.length === 0 || warehouses.length === 0) return;
+      if (masterLoading) return;
+      if (!poId) { setLoading(false); return; }
+      if (masterError) {
+        setLoading(false);
+        toast.error("Unable to load master data");
+        return;
+      }
+      if (vendors.length === 0 || warehouses.length === 0) {
+        setLoading(false);
+        toast.error("Required vendor/warehouse data is unavailable");
+        return;
+      }
       try {
         const res  = await apiFetch(`${API_BASE}api/purchaseorder/api/get_po_details/${poId}`);
         const json = await res;
-        setLoading(false);
         if (json.status) {
           const { po:p, po_vendor_details, line_items, po_receive_id, preferred_shipping_provider } = json.data;
           setSbPoNumber(p.po_number || "");
@@ -180,11 +190,17 @@ const PurchaseOrderForm = () => {
               discount:li.discount, gst_percent:li.tax, gst_amount:li.tax_amount,
               sub_total:li.sub_total, total:li.line_total, comment:li.comment, delivery_date:li.delivery_date
             })), p.shipping_charge, p.surcharge_total));
+        } else {
+          toast.error(json?.message || "Unable to load Purchase Order");
         }
-      } catch (err) { toast.error("Error loading Purchase Order"); }
+      } catch (err) {
+        toast.error("Error loading Purchase Order");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchPoData();
-  }, [poId, vendors, warehouses]);
+  }, [poId, vendors, warehouses, masterLoading, masterError]);
 
   const fetchVendorDetails = async (id) => {
     try {

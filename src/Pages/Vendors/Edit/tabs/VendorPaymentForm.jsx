@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Row, Col, FormGroup, Form } from 'react-bootstrap';
 import { motion, AnimatePresence } from "framer-motion";
 import DiaryInput from "../../../../Components/Common/DiaryInput";
 
-const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
-    const [activeView, setActiveView] = useState("paypal");
+const VendorPaymentForm = ({ data, onChange, paymentTerms, countries = [] }) => {
+    const [activeView, setActiveView] = useState("bank_transfer");
 
     // ✅ Local state for bank fields — lag fix
     const [bankLocal, setBankLocal] = useState({
         bank_name: "",
-        bank_branch: "",
         bank_account_holder_name: "",
         bank_ifsc: "",
         bank_account_number: "",
+        bank_account_number_confirm: "",
         bank_country: "",
     });
 
@@ -22,10 +22,10 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
         if (isFirstSync.current && data.bank_name !== undefined) {
             setBankLocal({
                 bank_name: data.bank_name || "",
-                bank_branch: data.bank_branch || "",
                 bank_account_holder_name: data.bank_account_holder_name || "",
                 bank_ifsc: data.bank_ifsc || "",
                 bank_account_number: data.bank_account_number || "",
+                bank_account_number_confirm: data.bank_account_number_confirm || "",
                 bank_country: data.bank_country || "",
             });
             isFirstSync.current = false;
@@ -56,6 +56,13 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
         }
     }, [data.mode_of_payment, updateField]);
 
+    // Default selection should be Bank Transfer when no payment method is set.
+    useEffect(() => {
+        if (!Array.isArray(data.mode_of_payment) || data.mode_of_payment.length === 0) {
+            updateField("mode_of_payment", ["bank_transfer"]);
+        }
+    }, [data.mode_of_payment, updateField]);
+
     useEffect(() => {
         if (data.wallet_type && typeof data.wallet_type === "string") {
             const cleanWallets = data.wallet_type.replace(/[[\]']/g, "").split(",").map(s => s.trim()).filter(Boolean);
@@ -79,7 +86,7 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
             if (modeId === 'paypal') {
                 updatedData.paypal_notes = "";
             } else if (modeId === 'bank_transfer') {
-                const cleared = { bank_name: "", bank_branch: "", bank_account_holder_name: "", bank_ifsc: "", bank_account_number: "", bank_country: "" };
+                const cleared = { bank_name: "", bank_account_holder_name: "", bank_ifsc: "", bank_account_number: "", bank_account_number_confirm: "", bank_country: "" };
                 updatedData = { ...updatedData, ...cleared };
                 setBankLocal(cleared);
             } else if (modeId === 'credit_card') {
@@ -98,6 +105,11 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
         return Array.isArray(data.mode_of_payment) && data.mode_of_payment.includes(modeId);
     };
 
+    const countryOptions = useMemo(
+        () => (countries || []).map((c) => c?.text).filter(Boolean),
+        [countries]
+    );
+
     return (
         <Row className="g-0 pb-3 rounded m-2 shadow-sm border">
             {/* LEFT SIDEBAR */}
@@ -107,8 +119,8 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
                         <Form.Label className="small fw-bold text-uppercase text-muted">Payment Term</Form.Label>
                         <Form.Select
                             size="sm"
-                            value={data.payment_terms || ""}
-                            onChange={(e) => updateField('payment_terms', e.target.value)}
+                            value={data.payment_term || ""}
+                            onChange={(e) => updateField('payment_term', e.target.value)}
                         >
                             <option value="">Select Term</option>
                             {paymentTerms?.map(pt => (
@@ -209,15 +221,6 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
                                 </Col>
                                 <Col md={6}>
                                     <FormGroup className="mb-3">
-                                        <Form.Label className="small fw-bold">Bank Branch <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control
-                                            size="sm"
-                                            value={bankLocal.bank_branch}
-                                            onChange={(e) => setBankLocal(p => ({ ...p, bank_branch: e.target.value }))}
-                                            onBlur={(e) => flushBankField('bank_branch', e.target.value)}
-                                        />
-                                    </FormGroup>
-                                    <FormGroup className="mb-3">
                                         <Form.Label className="small fw-bold">BSB / IFSC / SWIFT Code <span className="text-danger">*</span></Form.Label>
                                         <Form.Control
                                             size="sm"
@@ -230,10 +233,34 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms }) => {
                                         <Form.Label className="small fw-bold">Bank Country</Form.Label>
                                         <Form.Control
                                             size="sm"
+                                            placeholder="Search"
+                                            list="bank-country-list"
                                             value={bankLocal.bank_country}
                                             onChange={(e) => setBankLocal(p => ({ ...p, bank_country: e.target.value }))}
                                             onBlur={(e) => flushBankField('bank_country', e.target.value)}
                                         />
+                                        <datalist id="bank-country-list">
+                                            {countryOptions.map((countryName) => (
+                                                <option key={countryName} value={countryName} />
+                                            ))}
+                                        </datalist>
+                                    </FormGroup>
+                                    <FormGroup className="mb-3">
+                                        <Form.Label className="small fw-bold">Re-enter Account Number <span className="text-danger">*</span></Form.Label>
+                                        <Form.Control
+                                            size="sm"
+                                            maxLength={23}
+                                            value={bankLocal.bank_account_number_confirm}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                if (/^[a-zA-Z0-9]*$/.test(val)) {
+                                                    setBankLocal(p => ({ ...p, bank_account_number_confirm: val }));
+                                                }
+                                            }}
+                                            onBlur={(e) => flushBankField('bank_account_number_confirm', e.target.value)}
+                                            isInvalid={!!bankLocal.bank_account_number_confirm && bankLocal.bank_account_number_confirm !== bankLocal.bank_account_number}
+                                        />
+                                        <Form.Control.Feedback type="invalid">Account numbers do not match.</Form.Control.Feedback>
                                     </FormGroup>
                                     <FormGroup className="mb-3 d-none">
                                         <Form.Label className="small fw-bold">Verification Doc</Form.Label>
