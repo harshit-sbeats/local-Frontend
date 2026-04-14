@@ -4,6 +4,7 @@ import { API_BASE } from "../../../Config/api";
 import PaymentTermModals from "./PaymentTermModals";
 import Swal from "sweetalert2";
 import { apiFetch } from "../../../Utils/apiFetch";
+import { useMasterData } from "../../../Context/MasterDataProvider";
 
 const CSS = `
   /* ── header ── */
@@ -121,6 +122,7 @@ const CSS = `
 `;
 
 const PaymentTermsList = () => {
+  const { refreshMasterData } = useMasterData();
   const tableRef     = useRef(null);
   const tabulatorRef = useRef(null);
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
@@ -143,6 +145,7 @@ const PaymentTermsList = () => {
           const res = await apiFetch(`${API_BASE}api/payment-terms/delete/${id}`, { method: "DELETE" });
           if (res.status) {
             Swal.fire("Deleted!", "Term removed successfully.", "success");
+            await refreshMasterData();
             refreshTable();
           }
         } catch (e) {
@@ -172,11 +175,12 @@ const PaymentTermsList = () => {
     tabulatorRef.current = new Tabulator(tableRef.current, {
       ajaxURL: `${API_BASE}api/payment-terms`,
       layout:  "fitColumns",
-      height:  "480px",
+      height:  "700px",
       placeholder: `<div class="ptl-empty"><div class="ptl-empty-icon"><i class="fas fa-file-invoice-dollar"></i></div>No payment terms found</div>`,
       ajaxResponse: (url, params, response) => {
-        setTotalCount(response.total || 0);
-        return response.data || [];
+        const rows = response.data || [];
+        setTotalCount(response.total_record || rows.length || 0);
+        return rows;
       },
       ajaxRequestFunc: async function (url, config, params) {
         const query = new URLSearchParams({
@@ -198,7 +202,7 @@ const PaymentTermsList = () => {
           formatter: (cell) => {
             const val = cell.getValue();
             if (val === "" || val === null || val === undefined) return "—";
-            const isPrepaid = val === 1;
+            const isPrepaid = Number(val) === 1;
             return `<span style="
               padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;
               background:${isPrepaid ? "#dbeafe" : "#fef9c3"};
@@ -222,7 +226,8 @@ const PaymentTermsList = () => {
         {
           title: "Status", field: "status", headerHozAlign: "center", hozAlign: "center", width: 120, headerSort: false,
           formatter: (cell) => {
-            const active = cell.getValue() === 1;
+            const raw = cell.getValue();
+            const active = String(raw).toLowerCase() === "active" || String(raw) === "1";
             return active
               ? `<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;">ACTIVE</span>`
               : `<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#fee2e2;color:#b91c1c;">INACTIVE</span>`;

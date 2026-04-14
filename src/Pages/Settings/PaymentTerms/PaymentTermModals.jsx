@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { API_BASE } from "../../../Config/api";
 import { apiFetch } from "../../../Utils/apiFetch";
+import { useMasterData } from "../../../Context/MasterDataProvider";
 
 const CSS = `
   .ptm-overlay {
@@ -87,9 +88,10 @@ const CSS = `
 const PaymentTermModals = ({ config, onClose, onRefresh }) => {
   const { type, data } = config;
   const isEdit = type === "edit";
+  const { refreshMasterData } = useMasterData();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    type: "", name: "", termOption: "", frequency: "", status: 1,
+    type: "", name: "", termOption: "", frequency: "", status: "Active",
   });
 
   const termOptionLabels = {
@@ -97,6 +99,13 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
     nextMonth14: "14th of Next Month",
     nextMonthLastDay: "Last day of Next Month",
     nextNextMonthLastDay: "Last day of Next to Next Month",
+  };
+
+  const normalizeStatus = (raw) => {
+    const s = String(raw ?? "").trim().toLowerCase();
+    if (s === "1" || s === "active") return "Active";
+    if (s === "0" || s === "inactive") return "Inactive";
+    return "Active";
   };
 
   useEffect(() => {
@@ -115,10 +124,19 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
         name:       data.name,
         termOption: option,
         frequency:  option === "frequency" ? data.frequency : "",
-        status:     data.status,
+        status:     normalizeStatus(data.status),
       });
     }
   }, [type, data]);
+
+  useEffect(() => {
+    // Business rule: Prepaid is always Frequency with 0 days.
+    if (String(formData.type) === "1") {
+      if (formData.termOption !== "frequency" || String(formData.frequency) !== "0") {
+        setFormData(prev => ({ ...prev, termOption: "frequency", frequency: "0" }));
+      }
+    }
+  }, [formData.type, formData.termOption, formData.frequency]);
 
   const set = (key, val) => setFormData(prev => ({ ...prev, [key]: val }));
 
@@ -129,9 +147,11 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
 
     const payload = {
       ...formData,
-      frequency: formData.termOption === "frequency"
-        ? formData.frequency
-        : termOptionLabels[formData.termOption],
+      frequency: String(formData.type) === "1"
+        ? 0
+        : (formData.termOption === "frequency"
+          ? formData.frequency
+          : termOptionLabels[formData.termOption]),
     };
 
     setLoading(true);
@@ -145,6 +165,7 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
       });
       if (res.status) {
         Swal.fire("Success", res.message || "Term saved", "success");
+        await refreshMasterData();
         onRefresh();
         onClose();
       } else {
@@ -212,6 +233,7 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
                   className="ptm-select"
                   value={formData.termOption}
                   onChange={e => set("termOption", e.target.value)}
+                  disabled={String(formData.type) === "1"}
                 >
                   <option value="" disabled hidden>Select payment term</option>
                   <option value="frequency">Frequency</option>
@@ -233,8 +255,13 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
                   value={formData.frequency}
                   onChange={e => set("frequency", e.target.value)}
                   onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
+                  disabled={String(formData.type) === "1"}
                 />
-                <p className="ptm-hint">Enter the number of days for the frequency term.</p>
+                <p className="ptm-hint">
+                  {String(formData.type) === "1"
+                    ? "For Prepaid, days are fixed to 0."
+                    : "Enter the number of days for the frequency term."}
+                </p>
               </div>
             )}
 
@@ -242,8 +269,8 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
             <div className="ptm-field">
               <label className="ptm-label">Status</label>
               <select className="ptm-select" value={formData.status} onChange={e => set("status", e.target.value)}>
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               </select>
             </div>
 
