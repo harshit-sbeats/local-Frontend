@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { Row, Col, FormGroup, Form } from 'react-bootstrap';
 import { motion, AnimatePresence } from "framer-motion";
 import DiaryInput from "../../../../Components/Common/DiaryInput";
+import SearchableSelect from "../../../../Components/Common/SearchableSelect";
 
 const VendorPaymentForm = ({ data, onChange, paymentTerms, countries = [] }) => {
     const [activeView, setActiveView] = useState("bank_transfer");
@@ -247,23 +248,26 @@ const VendorPaymentForm = ({ data, onChange, paymentTerms, countries = [] }) => 
                                     </FormGroup>
                                     <FormGroup className="mb-3">
                                         <Form.Label className="small fw-bold">Bank Country</Form.Label>
-                                        <Form.Control
-                                            size="sm"
-                                            placeholder="Search"
-                                            list="bank-country-list"
+                                          <SearchableSelect
+                                            name="bank_country"
+                                            options={countryOptions.map((c) => ({ country: c }))}
                                             value={bankLocal.bank_country}
                                             onChange={(e) => {
                                                 const val = e.target.value;
-                                                setBankLocal(p => ({ ...p, bank_country: val }));
-                                                flushBankField('bank_country', val);
+                                                setBankLocal((p) => ({ ...p, bank_country: val }));
+                                                updateField('bank_country', val);
                                             }}
                                             onBlur={(e) => flushBankField('bank_country', e.target.value)}
+                                            labelKey="country"
+                                            valueKey="country"
+                                            unique={true}
+                                            placeholder="Search country..."
+                                            renderLabel={(v) => (
+                                                <div className="w-100">
+                                                    <span className="fw-bold">{v.country}</span>
+                                                </div>
+                                            )}
                                         />
-                                        <datalist id="bank-country-list">
-                                            {countryOptions.map((countryName) => (
-                                                <option key={countryName} value={countryName} />
-                                            ))}
-                                        </datalist>
                                     </FormGroup>
                                     <FormGroup className="mb-3">
                                         <Form.Label className="small fw-bold">Re-enter Account Number <span className="text-danger">*</span></Form.Label>
