@@ -111,13 +111,14 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
   useEffect(() => {
     if (isEdit && data) {
       const normalized = data.frequency?.toString().trim().toLowerCase();
-      const option = normalized === "14th of next month"
-        ? "nextMonth14"
-        : normalized === "last day of next month"
-          ? "nextMonthLastDay"
-          : normalized === "last day of next to next month"
-            ? "nextNextMonthLastDay"
-            : "frequency";
+      const option = data.term_option
+        || (normalized === "14th of next month"
+          ? "nextMonth14"
+          : normalized === "last day of next month"
+            ? "nextMonthLastDay"
+            : normalized === "last day of next to next month"
+              ? "nextNextMonthLastDay"
+              : "frequency");
 
       setFormData({
         type:       data.type,
@@ -147,6 +148,7 @@ const PaymentTermModals = ({ config, onClose, onRefresh }) => {
 
     const payload = {
       ...formData,
+      term_option: formData.termOption,
       frequency: String(formData.type) === "1"
         ? 0
         : (formData.termOption === "frequency"

@@ -128,6 +128,12 @@ const PaymentTermsList = () => {
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
   const [search, setSearch]           = useState("");
   const [totalCount, setTotalCount]   = useState(0);
+  const termOptionLabels = {
+    frequency: "Frequency",
+    nextMonth14: "14th of Next Month",
+    nextMonthLastDay: "Last day of Next Month",
+    nextNextMonthLastDay: "Last day of Next to Next Month",
+  };
 
   const refreshTable = () => tabulatorRef.current?.setData();
 
@@ -215,7 +221,15 @@ const PaymentTermsList = () => {
           title: "Frequency (Days)", field: "frequency", hozAlign: "center", width: 160, headerSort: false,
           formatter: (cell) => {
             const val = cell.getValue();
+            const termOption = cell.getRow().getData()?.term_option;
             if (!val) return `<span style="color:#d1d5db;">—</span>`;
+            if (termOption && termOption !== "frequency") {
+              return `<span style="
+                background:#fff7ed;color:#9a3412;
+                padding:3px 10px;border-radius:6px;
+                font-size:12px;font-weight:600;
+              ">${termOptionLabels[termOption] || "Custom Term"}</span>`;
+            }
             return `<span style="
               background:#f1f5f9;color:#475569;
               padding:3px 10px;border-radius:6px;
