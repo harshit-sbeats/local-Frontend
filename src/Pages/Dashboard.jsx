@@ -81,8 +81,8 @@ const StatCard = ({ icon, label, value, change, gradient, bgIcon }) => (
       >
         <FontAwesomeIcon icon={bgIcon || icon} />
       </div>
-      <div className="card-body p-3 position-relative">
-        <div className="d-flex align-items-center mb-2">
+      <div className="card-body p-3 position-relative d-flex flex-column gap-1">
+        <div className="d-flex align-items-center ">
           <div
             className="me-2 p-2 rounded-2"
             style={{ background: "rgba(255,255,255,0.2)" }}
@@ -94,7 +94,7 @@ const StatCard = ({ icon, label, value, change, gradient, bgIcon }) => (
         <div style={{ fontSize: "1.75rem", fontWeight: 600, letterSpacing: "-0.02em" }}>
           {value}
         </div>
-        <div style={{ fontSize: 12, marginTop: 6, opacity: 0.85 }}>
+        <div style={{ fontSize: 12,  opacity: 0.85 }}>
           <FontAwesomeIcon icon={faArrowTrendUp} className="me-1" />
           {change} this month
         </div>
@@ -149,10 +149,10 @@ const Dashboard = () => {
     }
   };
   return (
-    <div style={{ fontFamily: FONT, marginLeft: -5, marginRight: -5 }}>
+    <div style={{ fontFamily: FONT, marginLeft: -5, marginRight: -5  }}>
 
       {/* Top bar */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-1">
         <div>
           <h3 style={{ fontWeight: 600, fontSize: 20, margin: 0 }}>Dashboard</h3>
           <small style={{ color: "#e05c5c", fontSize: 12 }}></small>
@@ -174,10 +174,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="border shadow-sm p-2" style={{ borderRadius: 10, background: "#f9fafb" }}>
 
         {/* ── Stat Cards ── */}
-        <div className="row g-2 mb-3">
+        <div className="row g-2 mb-2">
           <StatCard icon={faDollarSign} label="Total Sales" value="$25,450.00" change="+5.2%" gradient="linear-gradient(135deg,#11998e,#38ef7d)" />
           <StatCard icon={faShoppingCart} label="Purchase Orders" value="1,258" change="+10.4%" gradient="linear-gradient(135deg,#4776e6,#8e54e9)" />
           <StatCard icon={faBoxOpen} label="Products" value="320" change="+2.7%" gradient="linear-gradient(135deg,#f7971e,#ffd200)" />
@@ -185,12 +184,12 @@ const Dashboard = () => {
         </div>
 
         {/* ── Charts Row ── */}
-        <div className="row g-3 mb-3 align-items-stretch">
+        <div className="row g-3 mb-2 align-items-stretch">
 
           {/* Sales Overview */}
           <div className="col-12 col-lg-5">
-            <div className="card border shadow-sm h-100" style={{ borderRadius: 10, fontFamily: FONT }}>
-              <div className="card-header d-flex justify-content-between align-items-center" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
+            <div className="card border shadow-sm h-100 d-flex flex-column" style={{ borderRadius: 10, fontFamily: FONT }}>
+              <div className="p-2 d-flex justify-content-between align-items-center" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Sales Overview</h6>
                 <button
                   className="btn btn-sm btn-outline-secondary"
@@ -200,46 +199,48 @@ const Dashboard = () => {
                   {salesPeriod} <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
                 </button>
               </div>
-              <div className="card-body pb-0 px-2">
+              <div className="card-body p-2 d-flex flex-column ustify-content-between">
                 <div className="d-flex align-items-center gap-3 mb-2" style={{ fontSize: 11, color: "#6b7280" }}>
                   <span>Total Sales ($ USD)</span>
                   <span><span style={{ color: "#4e9af1" }}>●</span> This Year</span>
                   <span><span style={{ color: "#ccc" }}>●</span> Last Year</span>
                 </div>
-                <ResponsiveContainer width="100%" height={290}>
-                  <AreaChart data={salesData}>
-                    <defs>
-                      <linearGradient id="thisYearGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#4e9af1" stopOpacity={0.2} />
-                        <stop offset="95%" stopColor="#4e9af1" stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="lastYearGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#bbb" stopOpacity={0.2} />
-                        <stop offset="95%" stopColor="#bbb" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e8e8e8" />
-                    <XAxis
-                      dataKey="month"
-                      tick={{ fontSize: 11, fontFamily: FONT }}
-                      height={18}
-                      axisLine={{ stroke: "#e8e8e8" }}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      width={28}
-                      tick={{ fontSize: 11, fontFamily: FONT }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(v) => `${v / 1000}k`}
-                      domain={[2500, 8000]}
-                      ticks={[4000, 5500, 7500]}
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="lastYear" stroke="#bbb" strokeWidth={2} fill="url(#lastYearGrad)" dot={{ r: 3, fill: "#bbb" }} />
-                    <Area type="monotone" dataKey="thisYear" stroke="#4e9af1" strokeWidth={2} fill="url(#thisYearGrad)" dot={{ r: 3, fill: "#4e9af1" }} />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <div style={{ flex:1 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={salesData}>
+                      <defs>
+                        <linearGradient id="thisYearGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#4e9af1" stopOpacity={0.2} />
+                          <stop offset="95%" stopColor="#4e9af1" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="lastYearGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#bbb" stopOpacity={0.2} />
+                          <stop offset="95%" stopColor="#bbb" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e8e8e8" />
+                      <XAxis
+                        dataKey="month"
+                        tick={{ fontSize: 11, fontFamily: FONT }}
+                        height={18}
+                        axisLine={{ stroke: "#e8e8e8" }}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        width={28}
+                        tick={{ fontSize: 11, fontFamily: FONT }}
+                        axisLine={false}
+                        tickLine={false}
+                        tickFormatter={(v) => `${v / 1000}k`}
+                        domain={[2500, 8000]}
+                        ticks={[4000, 5500, 7500]}
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Area type="monotone" dataKey="lastYear" stroke="#bbb" strokeWidth={2} fill="url(#lastYearGrad)" dot={{ r: 3, fill: "#bbb" }} />
+                      <Area type="monotone" dataKey="thisYear" stroke="#4e9af1" strokeWidth={2} fill="url(#thisYearGrad)" dot={{ r: 3, fill: "#4e9af1" }} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           </div>
@@ -251,7 +252,7 @@ const Dashboard = () => {
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Purchase Order Status</h6>
               </div>
               <div className="card-body d-flex flex-column align-items-center justify-content-center">
-                <div style={{ position: "relative", width: 220, height: 220 }}>
+                <div style={{ position: "relative", width: 220, height: 200 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -353,16 +354,16 @@ const Dashboard = () => {
         </div>
 
         {/* ── Bottom Row ── */}
-        <div className="row g-3">
+        <div className="row g-3 align-items-stretch">
 
           {/* Recent Purchase Orders */}
           <div className="col-12 col-lg-6">
-            <div className="card  border shadow-sm" style={{ borderRadius: 10, fontFamily: FONT, height: "-webkit-fill-available" }}>
+            <div className="card border shadow-sm h-100 d-flex flex-column" style={{ borderRadius: 10, fontFamily: FONT, height: 320 }}>
               <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Recent Purchase Orders</h6>
               </div>
-              <div className="card-body p-0">
-                <div className="table-responsive">
+              <div className="card-body p-0 d-flex flex-column" style={{ minHeight: 0 }}>
+                <div className="table-responsive" style={{ flex: 1, overflowY: "auto" }}>
                   <table className="table table-hover align-middle mb-0" style={{ fontFamily: FONT, fontSize: 12 }}>
                     <thead>
                       <tr style={{ background: "#f9fafb" }}>
@@ -395,12 +396,12 @@ const Dashboard = () => {
 
           {/* Total Invoices Pie */}
           <div className="col-12 col-lg-6">
-            <div className="card border shadow-sm" style={{ borderRadius: 10, fontFamily: FONT }}>
+            <div className="card border shadow-sm h-100 d-flex flex-column" style={{ borderRadius: 10, fontFamily: FONT, height: 320 }}>
               <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Total Invoices</h6>
               </div>
-              <div className="card-body d-flex flex-column align-items-center">
-                <ResponsiveContainer width="100%" height={230}>
+              <div className="card-body d-flex flex-column align-items-center justify-content-between p-2" style={{ minHeight: 0 }}>
+                <ResponsiveContainer width="100%" height={205}>
                   <PieChart>
                     <Pie
                       data={invoiceStatusData}
@@ -421,7 +422,7 @@ const Dashboard = () => {
                     />
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="d-flex flex-wrap justify-content-center gap-3 mt-1">
+                <div className="d-flex flex-wrap justify-content-center gap-2 mt-1">
                   {invoiceStatusData.map((item, i) => (
                     <div key={i} className="d-flex align-items-center gap-2">
                       <div style={{ width: 9, height: 9, borderRadius: "50%", background: item.color }} />
@@ -435,7 +436,6 @@ const Dashboard = () => {
           </div>
 
         </div>
-      </div>
     </div>
   );
 };
