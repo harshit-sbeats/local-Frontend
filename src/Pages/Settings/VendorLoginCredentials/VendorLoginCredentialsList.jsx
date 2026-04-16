@@ -69,6 +69,7 @@ const VendorLoginCredentialsList = () => {
     tabulatorRef.current = new Tabulator(tableRef.current, {
       layout: "fitColumns",
       // height: "750px",
+      height: "calc(100vh - 240px)",
       placeholder: `<div class="cl-state-cell"><div class="cl-state-icon"><i class="fas fa-key"></i></div>No vendor login credentials yet</div>`,
       ajaxURL: `${API_BASE}api/vendor-portal-credentials`,
       ajaxRequestFunc: async (url) => {
