@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 const VendorWarehouseModal = ({ show, onHide, vendorId, editData, onSaveSuccess, countries }) => {
     // Local state for the modal only
     const [tempWarehouse, setTempWarehouse] = useState({ 
-        name: "", delivery_name: "", address_line1: "", address_line2: "", 
+        address_line1: "", 
         city: "", state_id: "", zip: "", country_id: "" 
     });
     const [warehouseStates, setWarehouseStates] = useState([]);
@@ -20,7 +20,7 @@ const VendorWarehouseModal = ({ show, onHide, vendorId, editData, onSaveSuccess,
                 fetchStates(editData.country_id, editData.state_id);
             }
         } else {
-            setTempWarehouse({ name: "", delivery_name: "", address_line1: "", address_line2: "", city: "", state_id: "", zip: "", country_id: "" });
+            setTempWarehouse({ address_line1: "", city: "", state_id: "", zip: "", country_id: "" });
             setWarehouseStates([]);
         }
     }, [editData, show]);
@@ -69,25 +69,36 @@ const VendorWarehouseModal = ({ show, onHide, vendorId, editData, onSaveSuccess,
                 <Modal.Title className="h6 fw-bold">Warehouse / Location Details</Modal.Title>
             </Modal.Header>
             <Modal.Body className="px-4">
+                <Form.Group className="mb-3">
+                    <Form.Label className="small fw-bold">Address Line 1</Form.Label>
+                    <Form.Control 
+                        size="sm" 
+                        value={tempWarehouse.address_line1 || ""} 
+                        onChange={e => setTempWarehouse({...tempWarehouse, address_line1: e.target.value})} 
+                    />
+                </Form.Group>
                 <Row className="mb-3">
                     <Col md={6}>
-                        <Form.Label className="small fw-bold">Warehouse Name</Form.Label>
+                        <Form.Label className="small fw-bold">City</Form.Label>
                         <Form.Control 
                             size="sm" 
-                            value={tempWarehouse.name || ""} 
-                            onChange={e => setTempWarehouse({...tempWarehouse, name: e.target.value})} 
+                            value={tempWarehouse.city || ""} 
+                            onChange={e => setTempWarehouse({...tempWarehouse, city: e.target.value})} 
                         />
                     </Col>
                     <Col md={6}>
-                        <Form.Label className="small fw-bold">Delivery Contact Name</Form.Label>
-                        <Form.Control 
+                        <Form.Label className="small fw-bold">State</Form.Label>
+                        <Form.Select 
                             size="sm" 
-                            value={tempWarehouse.delivery_name || ""} 
-                            onChange={e => setTempWarehouse({...tempWarehouse, delivery_name: e.target.value})} 
-                        />
+                            value={tempWarehouse.state_id || ""} 
+                            onChange={e => setTempWarehouse({...tempWarehouse, state_id: e.target.value})}
+                            disabled={!tempWarehouse.country_id}
+                        >
+                            <option value="">Select State</option>
+                            {warehouseStates.map(s => <option key={s.id} value={s.id}>{s.text}</option>)}
+                        </Form.Select>
                     </Col>
                 </Row>
-                {/* ... Include the rest of your Address/City/State/Zip inputs here ... */}
                 <Row className="mb-3">
                     <Col md={6}>
                         <Form.Label className="small fw-bold">Country</Form.Label>
@@ -101,16 +112,12 @@ const VendorWarehouseModal = ({ show, onHide, vendorId, editData, onSaveSuccess,
                         </Form.Select>
                     </Col>
                     <Col md={6}>
-                        <Form.Label className="small fw-bold">State</Form.Label>
-                        <Form.Select 
+                        <Form.Label className="small fw-bold">ZIP Code</Form.Label>
+                        <Form.Control 
                             size="sm" 
-                            value={tempWarehouse.state_id || ""} 
-                            onChange={e => setTempWarehouse({...tempWarehouse, state_id: e.target.value})}
-                            disabled={!tempWarehouse.country_id}
-                        >
-                            <option value="">Select State</option>
-                            {warehouseStates.map(s => <option key={s.id} value={s.id}>{s.text}</option>)}
-                        </Form.Select>
+                            value={tempWarehouse.zip || ""} 
+                            onChange={e => setTempWarehouse({...tempWarehouse, zip: e.target.value})} 
+                        />
                     </Col>
                 </Row>
             </Modal.Body>

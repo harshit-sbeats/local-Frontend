@@ -769,20 +769,20 @@ const EditVendor = () => {
                         <Tab eventKey="vendor_warehouse" title="Vendor Details">
                             <div className="py-0 px-2 pb-1">
                                 <Button variant="link" className="p-0 text-decoration-none mb-3 float-right small"
-                                    onClick={() => { setTempWarehouse({ name: "", delivery_name: "", address_line1: "", address_line2: "", city: "", state_id: "", zip:"", country_id:"" }); setShowWarehouseModal(true); }}>
+                                    onClick={() => { setTempWarehouse({ address_line1: "", city: "", state_id: "", zip:"", country_id:"" }); setShowWarehouseModal(true); }}>
                                     <i className="fas fa-plus-circle me-1"></i> Add Location
                                 </Button>
                                 <Table size="sm" bordered hover className="text-center align-middle" style={{ fontSize: '13px' }}>
                                     <thead className="table-light text-muted">
                                         <tr>
-                                            <th style={{width:"30%"}}>WAREHOUSE NAME</th><th style={{width:"30%"}}>DELIVERY NAME</th>
-                                            <th style={{width:"15%"}}>CITY</th><th style={{width:"10%"}}>ZIP</th><th style={{width:'5%'}}>ACTION</th>
+                                            <th style={{width:"40%"}}>LOCATION</th>
+                                            <th style={{width:"30%"}}>CITY</th><th style={{width:"15%"}}>ZIP</th><th style={{width:'5%'}}>ACTION</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {vendorWarehouses.length > 0 ? vendorWarehouses.map((w) => (
                                             <tr key={w.id}>
-                                                <td className="fw-bold">{w.name}</td><td>{w.delivery_name}</td><td>{w.city}</td><td>{w.zip}</td>
+                                                <td className="fw-bold">{w.address_line1}</td><td>{w.city}</td><td>{w.zip}</td>
                                                 <td>
                                                     <div className="btn-group">
                                                         <Button variant="link" size="sm" className="text-success p-0 me-2"
@@ -793,7 +793,7 @@ const EditVendor = () => {
                                                     </div>
                                                 </td>
                                             </tr>
-                                        )) : (<tr><td colSpan="5" className="py-4 text-muted">No locations found</td></tr>)}
+                                        )) : (<tr><td colSpan="4" className="py-4 text-muted">No locations found</td></tr>)}
                                     </tbody>
                                 </Table>
                             </div>
@@ -1094,23 +1094,16 @@ const EditVendor = () => {
 
                 {/* Warehouse Modal */}
                 <Modal show={showWarehouseModal} onHide={() => setShowWarehouseModal(false)} centered size="lg">
-                    <Modal.Header closeButton><Modal.Title className="h6 fw-bold">Vendor Details / Location</Modal.Title></Modal.Header>
+                    <Modal.Header closeButton><Modal.Title className="h6 fw-bold">Vendor Details</Modal.Title></Modal.Header>
                     <Modal.Body className="px-4">
-                        <Row className="mb-3">
-                            <Col md={6}><Form.Label className="small fw-bold">Warehouse Name</Form.Label><Form.Control size="sm" value={tempWarehouse.name} onChange={e => setTempWarehouse({...tempWarehouse, name: e.target.value})} placeholder="Main Warehouse" /></Col>
-                            <Col md={6}><Form.Label className="small fw-bold">Delivery Contact Name</Form.Label><Form.Control size="sm" value={tempWarehouse.delivery_name} onChange={e => setTempWarehouse({...tempWarehouse, delivery_name: e.target.value})} placeholder="Receiver Name" /></Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Col md={6}><Form.Label className="small fw-bold">Address Line 1</Form.Label><Form.Control size="sm" value={tempWarehouse.address_line1} onChange={e => setTempWarehouse({...tempWarehouse, address_line1: e.target.value})} /></Col>
-                            <Col md={6}><Form.Label className="small fw-bold">Address Line 2</Form.Label><Form.Control size="sm" value={tempWarehouse.address_line2} onChange={e => setTempWarehouse({...tempWarehouse, address_line2: e.target.value})} /></Col>
-                        </Row>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="small fw-bold">Address Line 1</Form.Label>
+                            <Form.Control size="sm" value={tempWarehouse.address_line1} onChange={e => setTempWarehouse({...tempWarehouse, address_line1: e.target.value})} />
+                        </Form.Group>
                         <Row className="mb-3">
                             <Col md={6}>
-                                <Form.Label className="small fw-bold">Country</Form.Label>
-                                <Form.Select size="sm" value={tempWarehouse.country_id} onChange={e => handleWarehouseCountryChange(e.target.value)}>
-                                    <option value="">Select</option>
-                                    {countries?.map(c => <option key={c.id} value={c.id}>{c.text}</option>)}
-                                </Form.Select>
+                                <Form.Label className="small fw-bold">City</Form.Label>
+                                <Form.Control size="sm" value={tempWarehouse.city} onChange={e => setTempWarehouse({...tempWarehouse, city: e.target.value})} />
                             </Col>
                             <Col md={6}>
                                 <Form.Label className="small fw-bold">State</Form.Label>
@@ -1121,13 +1114,22 @@ const EditVendor = () => {
                             </Col>
                         </Row>
                         <Row className="mb-3">
-                            <Col md={6}><Form.Label className="small fw-bold">City</Form.Label><Form.Control size="sm" value={tempWarehouse.city} onChange={e => setTempWarehouse({...tempWarehouse, city: e.target.value})} /></Col>
-                            <Col md={6}><Form.Label className="small fw-bold">ZIP Code</Form.Label><Form.Control size="sm" value={tempWarehouse.zip} onChange={e => setTempWarehouse({...tempWarehouse, zip: e.target.value})} /></Col>
+                            <Col md={6}>
+                                <Form.Label className="small fw-bold">Country</Form.Label>
+                                <Form.Select size="sm" value={tempWarehouse.country_id} onChange={e => handleWarehouseCountryChange(e.target.value)}>
+                                    <option value="">Select</option>
+                                    {countries?.map(c => <option key={c.id} value={c.id}>{c.text}</option>)}
+                                </Form.Select>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Label className="small fw-bold">ZIP Code</Form.Label>
+                                <Form.Control size="sm" value={tempWarehouse.zip} onChange={e => setTempWarehouse({...tempWarehouse, zip: e.target.value})} />
+                            </Col>
                         </Row>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" size="sm" onClick={() => setShowWarehouseModal(false)}>Cancel</Button>
-                        <Button variant="primary" size="sm" onClick={handleSaveWarehouse}>Save Vendor Details</Button>
+                        <Button variant="primary" size="sm" onClick={handleSaveWarehouse}>Save Details</Button>
                     </Modal.Footer>
                 </Modal>
             </div>

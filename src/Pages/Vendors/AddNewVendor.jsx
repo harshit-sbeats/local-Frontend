@@ -651,15 +651,14 @@ const AddNewVendor = () => {
                                     <Table size="sm" bordered hover className="text-center align-middle" style={{ fontSize: '13px' }}>
                                         <thead className="table-light text-muted">
                                             <tr>
-                                                <th style={{ width: "30%" }}>WAREHOUSE NAME</th>
-                                                <th style={{ width: "30%" }}>DELIVERY NAME</th>
-                                                <th style={{ width: "15%" }}>CITY</th>
-                                                <th style={{ width: "10%" }}>ZIP</th>
+                                                <th style={{ width: "40%" }}>LOCATION</th>
+                                                <th style={{ width: "30%" }}>CITY</th>
+                                                <th style={{ width: "15%" }}>ZIP</th>
                                                 <th style={{ width: '5%' }}>ACTION</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td colSpan="5" className="py-4 text-muted">No locations found</td></tr>
+                                            <tr><td colSpan="4" className="py-4 text-muted">No locations found</td></tr>
                                         </tbody>
                                     </Table>
                                 </div>

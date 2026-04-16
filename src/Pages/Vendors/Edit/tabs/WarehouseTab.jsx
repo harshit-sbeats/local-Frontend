@@ -11,7 +11,7 @@ const WarehouseTab = ({ vendorId }) => {
     const [vendorWarehouses, setVendorWarehouses] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [warehouseStates, setWarehouseStates] = useState([]);
-    const [tempWarehouse, setTempWarehouse] = useState({ name: "", delivery_name: "", address_line1: "", country_id: "", state_id: "", city: "", zip: "" });
+    const [tempWarehouse, setTempWarehouse] = useState({ address_line1: "", country_id: "", state_id: "", city: "", zip: "" });
  
     const fetchWarehouses = useCallback(async () => {
         const res = await apiFetch(`${API_BASE}api/vendor/warehouse/getall/${vendorId}`);
@@ -59,19 +59,19 @@ const WarehouseTab = ({ vendorId }) => {
  
     return (
         <div className="py-2 px-2">
-            <Button variant="link" className="float-end mb-2 small" onClick={() => { setTempWarehouse({ name: "" }); setShowModal(true); }}>
+            <Button variant="link" className="float-end mb-2 small" onClick={() => { setTempWarehouse({ address_line1: "" }); setShowModal(true); }}>
                 <i className="fas fa-plus-circle me-1"></i> Add Location
             </Button>
             <Table size="sm" bordered hover className="text-center align-middle small">
                 <thead className="table-light">
-                    <tr><th>NAME</th><th>DELIVERY NAME</th><th>CITY</th><th>ACTION</th></tr>
+                    <tr><th>LOCATION</th><th>CITY</th><th>ACTION</th></tr>
                 </thead>
                 <tbody>
                     {vendorWarehouses.map(w => {
                         const warehouseId = getWarehouseId(w);
                         return (
                             <tr key={warehouseId}>
-                                <td>{w.name}</td><td>{w.delivery_name}</td><td>{w.city}</td>
+                                <td>{w.address_line1}</td><td>{w.city}</td>
                                 <td>
                                     <Button variant="link" size="sm" className="text-success p-0 me-2" onClick={() => { setTempWarehouse(w); handleCountryChange(w.country_id); setShowModal(true); }}><i className="fas fa-pen"></i></Button>
                                     <Button variant="link" size="sm" className="text-danger p-0" onClick={() => handleDeleteWarehouse(warehouseId)}><i className="fas fa-trash"></i></Button>
