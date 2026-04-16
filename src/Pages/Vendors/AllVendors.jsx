@@ -414,14 +414,14 @@ const AllVendors = () => {
 
   return (
     <>
-      <div  
-       style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 1020,
-        background: "#fff",
-        paddingTop: "0.25rem",
-      }}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1020,
+          background: "#fff",
+          paddingTop: "0.25rem",
+        }}
       >
         {/* HEADER */}
         <div className="d-flex justify-content-between ps-1 mb-1">
@@ -464,116 +464,116 @@ const AllVendors = () => {
 
         {/* FILTERS */}
         <div className="card">
-            <div className="row p-2">
-              {/* Vendor Search */}
-              <div className="col-md-4">
-                <label className="form-label">Search</label>
-                <div className="position-relative">
-                  <input
-                    id="filter_vendor"
-                    name="vendor_search"
-                    type="text"
-                    autoComplete="off"
-                    className="form-control"
-                    placeholder="Vendor Name or Vendor Code"
-                    value={searchValue}
-                    onChange={(e) => {
-                      handleVendorSearch(e.target.value);
-                      if (tabulatorRef.current) {
-                        tabulatorRef.current.setPage(1);
-                      }
+          <div className="row p-2">
+            {/* Vendor Search */}
+            <div className="col-md-3">
+              <label className="form-label">Search</label>
+              <div className="position-relative">
+                <input
+                  id="filter_vendor"
+                  name="vendor_search"
+                  type="text"
+                  autoComplete="off"
+                  className="form-control"
+                  placeholder="Vendor Name or Vendor Code"
+                  value={searchValue}
+                  onChange={(e) => {
+                    handleVendorSearch(e.target.value);
+                    if (tabulatorRef.current) {
+                      tabulatorRef.current.setPage(1);
+                    }
+                  }}
+                  onFocus={() => vendors.length && setShowDropdown(true)}
+                />
+
+                {showDropdown && vendors.length > 0 && (
+                  <ul
+                    className="list-group position-absolute w-100 shadow"
+                    style={{
+                      zIndex: 1000,
+                      maxHeight: "250px",
+                      overflowY: "auto",
                     }}
-                    onFocus={() => vendors.length && setShowDropdown(true)}
-                  />
-
-                  {showDropdown && vendors.length > 0 && (
-                    <ul
-                      className="list-group position-absolute w-100 shadow"
-                      style={{
-                        zIndex: 1000,
-                        maxHeight: "250px",
-                        overflowY: "auto",
-                      }}
-                    >
-                      {vendors.map((vendor) => (
-                        <li
-                          key={vendor.id}
-                          className="list-group-item list-group-item-action"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleSelectVendor(vendor)}
-                        >
-                          <strong>{vendor.vendor_code}</strong> -{" "}
-                          {vendor.vendor_name}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+                  >
+                    {vendors.map((vendor) => (
+                      <li
+                        key={vendor.id}
+                        className="list-group-item list-group-item-action"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleSelectVendor(vendor)}
+                      >
+                        <strong>{vendor.vendor_code}</strong> -{" "}
+                        {vendor.vendor_name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
+            </div>
 
-              {/* Vendor Status */}
-              <div className="col-md-4">
-                <label className="form-label">Vendor Status</label>
-                <select
-                  name="status"
-                  className="form-control form-select"
-                  value={vendor_status}
-                  onChange={(e) => {
-                    setVendorStatus(e.target.value);
-                    if (tabulatorRef.current) {
-                      tabulatorRef.current.setPage(1);
-                    }
-                  }}
-                >
-                  <option value="">All</option>
-                  {[
-                    { id: 0, name: "Pending" },
-                    { id: 1, name: "In Process" },
-                    { id: 2, name: "Active" },
-                    { id: 3, name: "Reject" },
-                    { id: 4, name: "On Hold" },
-                  ]?.map((pt) => (
-                    <option key={pt.id} value={pt.id}>
-                      {pt.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/* Vendor Status */}
+            <div className="col-md-3">
+              <label className="form-label">Vendor Status</label>
+              <select
+                name="status"
+                className="form-control form-select"
+                value={vendor_status}
+                onChange={(e) => {
+                  setVendorStatus(e.target.value);
+                  if (tabulatorRef.current) {
+                    tabulatorRef.current.setPage(1);
+                  }
+                }}
+              >
+                <option value="">All</option>
+                {[
+                  { id: 0, name: "Pending" },
+                  { id: 1, name: "In Process" },
+                  { id: 2, name: "Active" },
+                  { id: 3, name: "Reject" },
+                  { id: 4, name: "On Hold" },
+                ]?.map((pt) => (
+                  <option key={pt.id} value={pt.id}>
+                    {pt.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              {/* Company Locality */}
-              <div className="col-md-4">
-                <label className="form-label">Company Locality</label>
-                <select
-                  name="vendor_locality"
-                  className="form-control form-select"
-                  value={vendor_locality}
-                  onChange={(e) => {
-                    setVendorLocality(e.target.value);
-                    if (tabulatorRef.current) {
-                      tabulatorRef.current.setPage(1);
-                    }
-                  }}
-                >
-                  <option value="">All</option>
-                  {[
-                    { id: 0, name: "Local" },
-                    { id: 1, name: "International" },
-                  ]?.map((pt) => (
-                    <option key={pt.id} value={pt.id}>
-                      {pt.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-            {/* FILTER ACTIONS */}
-            <div className="mt-2 d-flex gap-2">
-              <button className="btn btn-primary" onClick={applyFilter}>
+            {/* Company Locality */}
+            <div className="col-md-3">
+              <label className="form-label">Company Locality</label>
+              <select
+                name="vendor_locality"
+                className="form-control form-select"
+                value={vendor_locality}
+                onChange={(e) => {
+                  setVendorLocality(e.target.value);
+                  if (tabulatorRef.current) {
+                    tabulatorRef.current.setPage(1);
+                  }
+                }}
+              >
+                <option value="">All</option>
+                {[
+                  { id: 0, name: "Local" },
+                  { id: 1, name: "International" },
+                ]?.map((pt) => (
+                  <option key={pt.id} value={pt.id}>
+                    {pt.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+             {/* FILTER ACTIONS */}
+            <div className="col-md-3 d-flex align-items-end justify-content-end gap-2">
+              
+                <button className="btn btn-primary mx-2 w-50" onClick={applyFilter}>
                 <i className="fas fa-search me-2"></i>
                 Filter
               </button>
 
-              <button className="btn btn-light" onClick={clearFilter}>
+              <button className="btn btn-light w-50" onClick={clearFilter}>
                 Clear
               </button>
             </div>
