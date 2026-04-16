@@ -9,6 +9,6 @@ export const VENDOR_STATUS = [
 export const getVendorStatusName = (id) => {
   const status = VENDOR_STATUS.find(s => s.id === Number(id));
   return status 
-    ? `<span class="badge bg-${status.color}">${status.name}</span>` 
+    ? `<span class="new_badge bg-${status.color}" style="min-width:65px;">${status.name}</span>` 
     : "";
 };

@@ -17,59 +17,59 @@ const STORAGE_KEY = "purchase_order_columns";
 
 const deletePO = async (po_id, e) => {
   e.stopPropagation();
-    const result = await Swal.fire({
-      title: "Delete Purchase Order?",
-      text: "This purchase order will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
-    });
+  const result = await Swal.fire({
+    title: "Delete Purchase Order?",
+    text: "This purchase order will be permanently deleted.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  });
 
-    if (result.isConfirmed) {
-      const response = await apiFetch(`${API_ENDPOINTS.DELETE_PURCHASE_ORDER}${po_id}/`, { method: "DELETE" });
-      if (response.status) {
-        Swal.fire("Deleted!", "PO Details has been removed.", "success");
-      }
+  if (result.isConfirmed) {
+    const response = await apiFetch(`${API_ENDPOINTS.DELETE_PURCHASE_ORDER}${po_id}/`, { method: "DELETE" });
+    if (response.status) {
+      Swal.fire("Deleted!", "PO Details has been removed.", "success");
     }
+  }
 };
 
 const ALL_COLUMNS = [
   // FIXED COLUMNS (cannot be hidden)
   {
-    title: "SB PO",field: "po_number", width: 170,headerHozAlign: "center",headerHozAlign: "left",
-                hozAlign: "left",
-    
+    title: "SB PO", field: "po_number", width: 170, headerHozAlign: "center", headerHozAlign: "left",
+    hozAlign: "left",
+
     formatter: (cell) =>
       `<a href="/purchaseorder/details/${cell.getRow().getData().po_id}"
          className="fw-bold text-primary">${cell.getValue()}</a>`,
   },
   {
-    title: "Vendor PO",  hozAlign: "center", field: "master_vendor_po_number", width: 170, headerHozAlign: "left",
+    title: "Vendor PO", hozAlign: "center", field: "master_vendor_po_number", width: 170, headerHozAlign: "left",
     hozAlign: "left", headerSort: false,
   },
   {
     title: "Order Date",
-    field: "order_date",width: 170,
-                headerSort: false, 
-    fixed: true,formatter: function(cell) {
-        const dateValue = cell.getValue(); 
-        if (!dateValue) return "-"; 
-        try {
-          return formattedDate(dateValue);
-        }catch (e) {
-          return dateValue; 
-        }
+    field: "order_date", width: 170,
+    headerSort: false,
+    fixed: true, formatter: function (cell) {
+      const dateValue = cell.getValue();
+      if (!dateValue) return "-";
+      try {
+        return formattedDate(dateValue);
+      } catch (e) {
+        return dateValue;
+      }
     }
   },
-  { title: "Vendor Name",Width:220,   field: "vendor_name",headerSort: false, optional: true },
+  { title: "Vendor Name", Width: 220, field: "vendor_name", headerSort: false, optional: true },
   {
     title: "PO Status",
     headerSort: false,
     headerHozAlign: "center",
     hozAlign: "center",
     field: "status_id",
-    width:150,
+    width: 150,
     fixed: true,
     formatter: function (cell) {
       const status = cell.getValue();
@@ -87,37 +87,37 @@ const ALL_COLUMNS = [
       else if (status === 7) { text = "Closed"; badge = "badge-danger"; }
       else if (status === 8) { text = "Cancelled"; badge = "badge-danger"; }
 
-      return `<span class="px-3 py-2 fs-7 badge badge-pill ${badge}">${text.toUpperCase()}</span>`;
+      return `<span class="new_badge ${badge}" style="min-width:70px;">${text.toUpperCase()}</span>`;
     },
   },
- /* {
-    title: "Shipping Status",
-    field: "",
-    //shipping_status
-    fixed: true,headerSort: false, width:150,
-    formatter: function (cell) {
-      return <></>
-        const status = cell.getValue();
-        let text = "Unknown";
-        let badge = "badge-info";
-        return `<span class="px-3 py-2 fs-7 badge badge-pill ${badge}">${status.toUpperCase()}</span>`;
-    },
-  },*/
+  /* {
+     title: "Shipping Status",
+     field: "",
+     //shipping_status
+     fixed: true,headerSort: false, width:150,
+     formatter: function (cell) {
+       return <></>
+         const status = cell.getValue();
+         let text = "Unknown";
+         let badge = "badge-info";
+         return `<span class="px-3 py-2 fs-7 badge badge-pill ${badge}">${status.toUpperCase()}</span>`;
+     },
+   },*/
   { title: "Currency", field: "currency_code", width: 170, hozAlign: "center", headerHozAlign: "center", headerSort: false },
   //  OPTIONAL COLUMNS (hide / show)
-    {
+  {
     title: "Total Amount",
     field: "summary_total",
     //optional: true,
-    hozAlign: "center",width: 150,
-                headerSort: false
+    hozAlign: "center", width: 150,
+    headerSort: false
   },
   {
     title: "Ordered QTY",
     field: "product_total_qty",
     optional: true,
-    hozAlign: "center",width: 170,
-                headerSort: false
+    hozAlign: "center", width: 170,
+    headerSort: false
   },
   /*{
     title: "Received QTY",
@@ -204,70 +204,70 @@ const PurchaseOrderList = () => {
   const tableRef = useRef(null);
   const tabulatorRef = useRef(null);
   const { vendors, warehouses } = useMasterData();
-  const [ poTotalValue, setPOTotalValue ] = useState(0);
+  const [poTotalValue, setPOTotalValue] = useState(0);
   useEffect(() => {
     const visibleOptionalCols = getSavedColumns();
     tabulatorRef.current = new Tabulator(tableRef.current, {
-    placeholder: "No records found",
-  
-    layout: "fitColumns",
-    height: "auto-fit",
+      placeholder: "No records found",
 
-    pagination: true,
-    paginationMode: "remote",
-    paginationSize: 20,
-    paginationSizeSelector: [20, 30, 40, 50],
-    sortMode: "remote",
-    ajaxURL: API_ENDPOINTS.PO_LISTING,
+      layout: "fitColumns",
+      height: "auto-fit",
 
-    ajaxParams: function () {
-      return {
-        status: document.getElementById("filter_status")?.value || "",
-        order_no: document.getElementById("filter_order_no")?.value || "",
-        vendor_id: document.getElementById("filter_vendor")?.value || "",
-        delivery_ref: document.getElementById("filter_delivery_ref")?.value || "",
-        warehouse: document.getElementById("filter_warehouse")?.value || "",
-        vendor_payment_status:
-          document.getElementById("filter_vendor_payment_status")?.value || "",
-      };
-    },
+      pagination: true,
+      paginationMode: "remote",
+      paginationSize: 20,
+      paginationSizeSelector: [20, 30, 40, 50],
+      sortMode: "remote",
+      ajaxURL: API_ENDPOINTS.PO_LISTING,
 
-    ajaxRequestFunc: async function (url, config, params) {
+      ajaxParams: function () {
+        return {
+          status: document.getElementById("filter_status")?.value || "",
+          order_no: document.getElementById("filter_order_no")?.value || "",
+          vendor_id: document.getElementById("filter_vendor")?.value || "",
+          delivery_ref: document.getElementById("filter_delivery_ref")?.value || "",
+          warehouse: document.getElementById("filter_warehouse")?.value || "",
+          vendor_payment_status:
+            document.getElementById("filter_vendor_payment_status")?.value || "",
+        };
+      },
+
+      ajaxRequestFunc: async function (url, config, params) {
         // Extract sorting if you decide to add it later
         const sorter = params.sort && params.sort.length > 0 ? params.sort[0] : null;
         const requestParams = {
-            page: params.page || 1,
-            size: params.size || 20,
-            // Ensure filters are pulled from the DOM or the params object
-            status: document.getElementById("filter_status")?.value || "",
-            order_no: document.getElementById("filter_order_no")?.value || "",
-            vendor_id: document.getElementById("filter_vendor")?.value || "",
-            delivery_ref: document.getElementById("filter_delivery_ref")?.value || "",
-            warehouse: document.getElementById("filter_warehouse")?.value || "",
-            vendor_payment_status: document.getElementById("filter_vendor_payment_status")?.value || "",
+          page: params.page || 1,
+          size: params.size || 20,
+          // Ensure filters are pulled from the DOM or the params object
+          status: document.getElementById("filter_status")?.value || "",
+          order_no: document.getElementById("filter_order_no")?.value || "",
+          vendor_id: document.getElementById("filter_vendor")?.value || "",
+          delivery_ref: document.getElementById("filter_delivery_ref")?.value || "",
+          warehouse: document.getElementById("filter_warehouse")?.value || "",
+          vendor_payment_status: document.getElementById("filter_vendor_payment_status")?.value || "",
         };
 
         if (sorter) {
-            requestParams.sort_by = sorter.field;
-            requestParams.sort_dir = sorter.dir;
+          requestParams.sort_by = sorter.field;
+          requestParams.sort_dir = sorter.dir;
         }
 
         const query = new URLSearchParams(requestParams).toString();
         const res = await apiFetch(`${url}?${query}`);
         return res;
-    },
+      },
 
-    ajaxResponse: function (url, params, response) {
-      if(response?.grand_total !== undefined){
-        setPOTotalValue(response.grand_total);
-      }
-      return {
-        data: response.data || [],
-        last_page: response.last_page || 1,
-      };
-    },
+      ajaxResponse: function (url, params, response) {
+        if (response?.grand_total !== undefined) {
+          setPOTotalValue(response.grand_total);
+        }
+        return {
+          data: response.data || [],
+          last_page: response.last_page || 1,
+        };
+      },
 
-    columns: ALL_COLUMNS.map((col) => {
+      columns: ALL_COLUMNS.map((col) => {
         if (col.fixed) {
           return { ...col, visible: true };
         }
@@ -291,9 +291,9 @@ const PurchaseOrderList = () => {
         credentials: "include",
         headers: {
           "Content-type": "application/json",
-          },
+        },
       });
-      
+
       const data = res;
 
       if (data?.data?.po_id) {
@@ -301,13 +301,13 @@ const PurchaseOrderList = () => {
         window.location.href = `/purchaseorder/create/${data?.data?.po_id}/AddNew`;
       }
     } catch (err) {
-        console.error("Failed to create PO", err);
+      console.error("Failed to create PO", err);
     }
   };
 
   const applyFilter = () => {
     if (!tabulatorRef.current) return;
-      tabulatorRef.current.setPage(1); // triggers ajax reload
+    tabulatorRef.current.setPage(1); // triggers ajax reload
   };
 
   const clearFilter = () => {
@@ -331,53 +331,53 @@ const PurchaseOrderList = () => {
       {/* HEADER */}
       <div className="d-flex justify-content-between ps-1 mb-2">
         <h5 className="mb-0 fw-bold d-flex align-items-center gap-2">
-        <span className="header-left-badge"><FontAwesomeIcon icon={faListUl} style={{ fontSize:13,color:"#7c3aed" }}  /></span>
-        All Purchases</h5>
+          <span className="header-left-badge"><FontAwesomeIcon icon={faListUl} style={{ fontSize: 13, color: "#7c3aed" }} /></span>
+          All Purchases</h5>
         <div className="d-flex gap-1">
-            {/* In-transit */}
-             <button
+          {/* In-transit */}
+          <button
             className="btn btn-outline-primary"
             onClick={() => {
-                window.location.href = "/purchaseorder/kanbanlisting";
+              window.location.href = "/purchaseorder/kanbanlisting";
             }}
-            >
+          >
             <FontAwesomeIcon className="me-1 ps-0" icon={faTableColumns} />
             Kanban View
-            </button>
+          </button>
 
-            <button disabled={true}
+          <button disabled={true}
             className="btn btn-outline-primary"
             onClick={() => {
-                window.location.href = "/purchaseorder/intransit/listing";
+              window.location.href = "/purchaseorder/intransit/listing";
             }}
-            >
+          >
             <i className="fas fa-truck me-2"></i>
             In-transit
-            </button>
+          </button>
 
-            {/* Actions dropdown */}
-            <div className="btn-group">
+          {/* Actions dropdown */}
+          <div className="btn-group">
             <button className="btn btn-outline-dark" data-bs-toggle="dropdown" // Add this
-                aria-expanded="false" style={{height:"42px"}}>
-                <i className="fas fa-bars me-2"></i>
-                Action
+              aria-expanded="false" style={{ height: "42px" }}>
+              <i className="fas fa-bars me-2"></i>
+              Action
             </button>
             <button
-                className="btn btn-dark dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown"  style={{height:"42px"}}
+              className="btn btn-dark dropdown-toggle dropdown-toggle-split"
+              data-bs-toggle="dropdown" style={{ height: "42px" }}
             ></button>
 
             <ul className="dropdown-menu dropdown-menu-end">
-                <li>
+              <li>
                 <button
-                    className="dropdown-item"
-                    onClick={handleAddNew}
+                  className="dropdown-item"
+                  onClick={handleAddNew}
                 >
-                    <i className="fas fa-plus me-2"></i>
-                    Add New
+                  <i className="fas fa-plus me-2"></i>
+                  Add New
                 </button>
-                </li>
-                {/* <li>
+              </li>
+              {/* <li>
                 <button disabled={true} 
                     className="dropdown-item"
                     onClick={() => window.location.href = "/purchaseorder/import"}
@@ -404,108 +404,108 @@ const PurchaseOrderList = () => {
       {/* FILTERS */}
       <div className="card mb-3">
         <div className="card-body">
-        <div className="row g-3">
-        {/* Order Number */}
-        <div className="col-md-4">
-            <label className="form-label">Search</label>
-            <input
-            id="filter_order_no"
-            className="form-control"
-            placeholder="Vendor Order# or PO#"
-            />
-        </div>
-        {/* Purchase Status */}
-        <div className="col-md-2">
-            <label className="form-label">Purchase Status</label>
-            <select  id="filter_status" className="form-control form-select">
+          <div className="row g-3">
+            {/* Order Number */}
+            <div className="col-md-4">
+              <label className="form-label">Search</label>
+              <input
+                id="filter_order_no"
+                className="form-control"
+                placeholder="Vendor Order# or PO#"
+              />
+            </div>
+            {/* Purchase Status */}
+            <div className="col-md-2">
+              <label className="form-label">Purchase Status</label>
+              <select id="filter_status" className="form-control form-select">
                 <option value="">All</option>
-                  {PO_STATUS.map((status) => (
-                    <option key={status.id} value={status.id}>
-                        {status.name}
-                    </option>
+                {PO_STATUS.map((status) => (
+                  <option key={status.id} value={status.id}>
+                    {status.name}
+                  </option>
                 ))}
-            </select>
-        </div>
-        {/* Vendor */}
-        <div className="col-md-2">
-            <label className="form-label">Vendor</label>
-            <select id="filter_vendor" className="form-control form-select">
-            <option value="">All</option>
-              {vendors.map((vendor) => (
+              </select>
+            </div>
+            {/* Vendor */}
+            <div className="col-md-2">
+              <label className="form-label">Vendor</label>
+              <select id="filter_vendor" className="form-control form-select">
+                <option value="">All</option>
+                {vendors.map((vendor) => (
                   <option key={vendor.id} value={vendor.id}>
                     {vendor.vendor_name}
                   </option>
-              ))}
-            </select>
-        </div>
-
-        <div className="col-md-2">
-          <label className="form-label">Warehouse</label>
-          <select id="filter_warehouse" className="form-control form-select">
-            <option value="">All</option>
-              {warehouses.map((wh) => (
-                  <option key={wh.id} value={wh.id}>
-                  {wh.name}
-                  </option>
-              ))}
-          </select>
-        </div>
-
-        {/* Vendor Invoice Status */}
-        <div className="col-md-2">
-            <label className="form-label">Vendor Invoice Status</label>
-            <select id="filter_vendor_payment_status" className="form-control form-select"
-            >
-              <option value="">All</option> 
-              {INVOICE_STATUS.map((status) => (
-                    <option key={status.id} disabled value={status.id}>
-                        {status.value}
-                    </option>
                 ))}
-            </select>
+              </select>
+            </div>
+
+            <div className="col-md-2">
+              <label className="form-label">Warehouse</label>
+              <select id="filter_warehouse" className="form-control form-select">
+                <option value="">All</option>
+                {warehouses.map((wh) => (
+                  <option key={wh.id} value={wh.id}>
+                    {wh.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Vendor Invoice Status */}
+            <div className="col-md-2">
+              <label className="form-label">Vendor Invoice Status</label>
+              <select id="filter_vendor_payment_status" className="form-control form-select"
+              >
+                <option value="">All</option>
+                {INVOICE_STATUS.map((status) => (
+                  <option key={status.id} disabled value={status.id}>
+                    {status.value}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Delivery Ref */}
+            <div className="col-md-4 d-none">
+              <label className="form-label">Delivery Ref</label>
+              <input
+                id="filter_delivery_ref"
+                className="form-control"
+                placeholder="Delivery Ref"
+              />
+            </div>
+            {/* Warehouse */}
+          </div>
+          {/* FILTER ACTIONS */}
+          <div className="mt-3 d-flex gap-2">
+            <button className="btn btn-primary" onClick={applyFilter}>
+              <i className="fas fa-search me-2"></i>
+              Search
+            </button>
+            <button className="btn btn-light" onClick={clearFilter}>
+              Clear
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* Delivery Ref */}
-        <div className="col-md-4 d-none">
-          <label className="form-label">Delivery Ref</label>
-          <input
-          id="filter_delivery_ref"
-          className="form-control"
-          placeholder="Delivery Ref"
-          />
-       </div>
-      {/* Warehouse */}
-      </div>
-      {/* FILTER ACTIONS */}
-      <div className="mt-3 d-flex gap-2">
-        <button className="btn btn-primary" onClick={applyFilter}>
-            <i className="fas fa-search me-2"></i>
-            Search
-        </button>
-        <button className="btn btn-light" onClick={clearFilter}>
-            Clear
-        </button>
-      </div>
-    </div>
-    </div>
-
-    {/* TABLE */}
-    <div className="card">
-      <div className="p-0 mt-0">
-        <div ref={tableRef} />
-      </div>
-      <div className="row clearfix">
-        <div className="d-flex justify-content-end">
-          <div className="mt-5 pt-3 mb-5 pe-3 text-end">
+      {/* TABLE */}
+      <div className="card">
+        <div className="p-0 mt-0">
+          <div ref={tableRef} />
+        </div>
+        <div className="row clearfix">
+          <div className="d-flex justify-content-end">
+            <div className="mt-5 pt-3 mb-5 pe-3 text-end">
               <p className="text-uppercase mb-0">
                 <span className="text-uppercase text-muted mb-0">Purchase Orders Total</span>
                 <div className="d-block h5 mt-1 fw-bold">{formatAUD(poTotalValue)}</div>
               </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <ColumnModal />
+      <ColumnModal />
     </>
   );
 };

@@ -635,56 +635,49 @@ body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-treeview .nav-link[s
   border-color: #d1d5db;
   color: #374151;
 }
-
 .shipment-status {
   display: inline-block;
-  background-color: #ffffff;
-  font-weight: 800;
-  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
   text-transform: uppercase;
-  border-radius: 14px;
-  line-height: 16px;
-  padding: 2px 8px;
-  margin-top: 2px;
-  border: 2px solid;
   letter-spacing: 0.4px;
+  line-height: 16px;
+  margin-top: 2px;
+  text-align: center;
 }
 
 /* PARKED / Pending (Orange) */
 .shipment-status.Parked,
 .shipment-status.Pending {
-  border-color: #f06e23;
-  color: #f06e23;
+  background: #f06e23;
 }
 
 /* PLACED (Blue) */
 .shipment-status.Placed {
-  border-color: #0ea5e9;
-  color: #0ea5e9;
+  background: #0ea5e9;
 }
 
-/* SHIPPED (Teal/Green mix) */
+/* SHIPPED (Teal) */
 .shipment-status.Shipped {
-  border-color: #14b8a6;
-  color: #14b8a6;
+  background: #14b8a6;
 }
 
 /* DELIVERED (Green) */
 .shipment-status.Delivered {
-  border-color: #22c55e;
-  color: #22c55e;
+  background: #22c55e;
 }
 
 /* CANCELLED (Red) */
 .shipment-status.Cancelled {
-  border-color: #ef4444;
-  color: #ef4444;
+  background: #ef4444;
 }
 
 /* RETURNED (Gray) */
 .shipment-status.Returned {
-  border-color: #6b7280;
-  color: #6b7280;
+  background: #6b7280;
 }
 
 /* RETURNED (Gray) */

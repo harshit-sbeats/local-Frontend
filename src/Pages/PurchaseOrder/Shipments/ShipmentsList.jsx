@@ -341,9 +341,9 @@ const ShipmentsList = () => {
           // Remove spaces from class name safely
           const statusClass = statusObj.value.replace(/\s+/g, '');
          
-          return `<span class="shipment-status ${statusClass}">
-            ${statusObj.value}
-          </span>`
+          return `<span class="shipment-status ${statusClass}" style="min-width: 80px;">
+  ${statusObj.value}
+</span>`;
        } 
     },
     {

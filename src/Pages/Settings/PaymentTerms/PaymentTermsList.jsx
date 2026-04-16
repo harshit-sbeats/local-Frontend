@@ -119,22 +119,6 @@ const CSS = `
     text-align:center;padding:56px 0;color:#9ca3af;font-size:13px;
   }
   .ptl-empty-icon { font-size:36px;margin-bottom:12px;opacity:.25; }
-
-  .ptl-error {
-    display:flex;align-items:flex-start;gap:12px;
-    background:#fef2f2;border:1px solid #fecaca;
-    border-radius:12px;padding:16px;margin-bottom:16px;color:#991b1b;
-  }
-  .ptl-error-icon { font-size:18px;color:#b91c1c;margin-top:2px; }
-  .ptl-error-message {
-    flex:1;font-size:13px;line-height:1.6;color:#991b1b;
-  }
-  .ptl-error-message strong { display:block;font-weight:700;margin-bottom:4px; }
-  .ptl-error-retry {
-    background:#b91c1c;color:#fff;border:none;border-radius:8px;
-    padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;
-  }
-  .ptl-error-retry:hover { background:#991b1b; }
 `;
 
 const PaymentTermsList = () => {
@@ -144,7 +128,6 @@ const PaymentTermsList = () => {
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
   const [search, setSearch]           = useState("");
   const [totalCount, setTotalCount]   = useState(0);
-  const [errorMessage, setErrorMessage] = useState("");
   const termOptionLabels = {
     frequency: "Frequency",
     nextMonth14: "14th of Next Month",
