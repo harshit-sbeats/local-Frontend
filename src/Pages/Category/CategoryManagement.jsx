@@ -73,9 +73,9 @@ const CategoryManagement = () => {
       formatter: (cell) => {
         const val = cell.getValue();
         if(val === 1)
-          return `<span class="badge badge-success fw-bold">Primary</span>`;
+          return `<span class="new_badge badge-success fw-bold">Primary</span>`;
         else
-          return `<span class="badge badge-secondary fw-bold">Secondary</span>`; 
+          return `<span class="new_badge badge-secondary fw-bold">Secondary</span>`; 
       }
     },
     {

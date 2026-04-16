@@ -57,7 +57,7 @@ const UserManagement = () => {
                     field: "role", headerSort: false,
                     headerHozAlign: "center",
                     hozAlign: "center",
-                    formatter: (cell) => `<span class="badge bg-info text-white rounded-pill px-3">${cell.getValue() || 'No Role'}</span>`
+                    formatter: (cell) => `<span class="new_badge bg-info  ">${cell.getValue() || 'No Role'}</span>`
                 },
                 {
                     title: "Status",
@@ -68,7 +68,7 @@ const UserManagement = () => {
                     formatter: (cell) => {
                         const val = cell.getValue();
                         const color = (val === "Active" || val === 1) ? "bg-success" : "bg-secondary";
-                        return `<span class="badge ${color} rounded-pill px-3">${val === 1 ? 'Active' : 'Inactive'}</span>`;
+                        return `<span class="new_badge ${color} ">${val === 1 ? 'Active' : 'Inactive'}</span>`;
                     }
                 },
                 {
@@ -80,7 +80,7 @@ const UserManagement = () => {
                     formatter: (cell) => {
                         const val = cell.getValue();
                         const color = val ? "bg-warning text-dark" : "bg-light text-muted border";
-                        return `<span class="badge ${color} rounded-pill px-3">${val ? 'Yes' : 'No'}</span>`;
+                        return `<span class="new_badge ${color} ">${val ? 'Yes' : 'No'}</span>`;
                     }
                 },
                 {

@@ -71,7 +71,7 @@ const ManageUserRoles = () => {
                     width: 200, 
                     hozAlign: "center",
                     headerHozAlign: "center", 
-                    formatter: (cell) => `<span class="badge bg-light text-dark border">${cell.getValue()} Users</span>`
+                    formatter: (cell) => `<span class="new_badge bg-light ">${cell.getValue()} Users</span>`
                 },
                 {
                     title: "Actions",

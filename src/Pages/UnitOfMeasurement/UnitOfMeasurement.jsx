@@ -66,8 +66,8 @@ const UnitOfMeasurement = () => {
       headerSort: false,
       formatter: (cell) => {
         return cell.getValue() === 1 
-          ? `<span class="badge badge-success fw-bold">Active</span>` 
-          : `<span class="badge badge-secondary fw-bold">Inactive</span>`;
+          ? `<span class="new_badge badge-success fw-bold">Active</span>` 
+          : `<span class="new_badge badge-secondary fw-bold">Inactive</span>`;
       }
     },
     {

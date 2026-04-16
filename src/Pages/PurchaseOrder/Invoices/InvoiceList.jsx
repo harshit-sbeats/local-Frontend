@@ -29,8 +29,8 @@ const StatCard = ({ title, amount, count, icon, colorClass, iconBg }) => {
                 {count} Invoices
               </span>
             </div>
-            <div 
-              className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ${iconBg}`} 
+            <div
+              className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ${iconBg}`}
               style={{ width: '40px', height: '40px' }}
             >
               <i className={`${icon} ${colorClass}`} style={{ fontSize: '14px' }}></i>
@@ -54,7 +54,7 @@ const DashboardOverview = ({ summary }) => {
   return (
     /* Limit the stretch on high-res screens by using a wrapper with max-width */
     <div className="w-100 mx-auto" style={{ maxWidth: '1620px' }}>
-      <div className="row g-2 justify-content-center"> 
+      <div className="row g-2 justify-content-center">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
@@ -89,7 +89,7 @@ const InvoiceList = () => {
   const [showDropdown, setShowDropdown] = React.useState(false);
   const [dueDate, setDueDate] = React.useState("");
   const debounceRef = useRef(null);
-  const {paymentTerms } = useMasterData();
+  const { paymentTerms } = useMasterData();
 
   const tableRef = useRef(null);
   const tabulatorRef = useRef(null);
@@ -124,10 +124,10 @@ const InvoiceList = () => {
     // Format dates to ISO strings for the backend
     const fromStr = start.format('YYYY-MM-DD');
     const toStr = end.format('YYYY-MM-DD');
-    
+
     // Update the visual input field
     setDateRangeDisplay(`${start.format('DD/MM/YYYY')} - ${end.format('DD/MM/YYYY')}`);
-    
+
     // Store specifically as from/to for the API request
     setFilters({ due_date_from: fromStr, due_date_to: toStr });
 
@@ -201,7 +201,7 @@ const InvoiceList = () => {
           });
 
           // Success: Refresh Tabulator data instead of page reload
-          if(del_resp.status)
+          if (del_resp.status)
             Swal.fire({
               title: 'Deleted!',
               text: 'The vendor has been removed.',
@@ -218,8 +218,8 @@ const InvoiceList = () => {
 
           // Trigger Tabulator refresh
           if (tabulatorRef.current) {
-              tabulatorRef.current.setData(); 
-            }
+            tabulatorRef.current.setData();
+          }
 
         } catch (error) {
           console.error("Delete failed:", error);
@@ -239,41 +239,41 @@ const InvoiceList = () => {
       title: "SB PO",
       field: "sb_po_number",
       width: 140,
-      fixed: true,formatter: (cell) => {
+      fixed: true, formatter: (cell) => {
         const id = cell.getRow().getData().po_id;
         return `
           <a target="_blank" href="/purchaseorder/details/${id}" class=" link" title="Edit">
               ${cell.getValue()}
         </a>`;
-      } 
+      }
     },
     {
       title: "Vendor PO",
       field: "vendor_po_number",
       width: 100,
-      fixed: true, headerSort:false
+      fixed: true, headerSort: false
     },
-{
+    {
       title: "VENDOR NAME",
       field: "vendor_name",
-       headerHozAlign: "center", 
-       hozAlign: "center",
-      Width:80,
+      headerHozAlign: "center",
+      hozAlign: "center",
+      Width: 80,
       formatter: (cell) => {
         const id = cell.getRow().getData().vendor_id;
         return `
           <a target="_blank" href="/vendor/editvendor/${id}" class=" link" title="Edit">
               ${cell.getValue()}
         </a>`;
-      } 
+      }
     },
     {
       title: "INVOICE NO",
       field: "invoice_number",
       width: 200,
-       headerHozAlign: "center", 
-       hozAlign: "center",
-      fixed: true,headerSort:true,
+      headerHozAlign: "center",
+      hozAlign: "center",
+      fixed: true, headerSort: true,
       formatter: (cell) => {
         const id = cell.getRow().getData().po_invoice_id;
         return `
@@ -288,7 +288,7 @@ const InvoiceList = () => {
       headerSort: false,
       formatter: (cell) => {
         return formattedDate(cell.getValue());
-      } 
+      }
     },
     {
       title: " DUE DATE",
@@ -297,21 +297,21 @@ const InvoiceList = () => {
       headerSort: false,
       formatter: (cell) => {
         return formattedDate(cell.getValue());
-      } 
+      }
     },
     {
       title: "INVOICE AMOUNT",
-      field: "invoice_total", width:170,headerSort:false,
-      headerHozAlign: "center", 
-       hozAlign: "center",
+      field: "invoice_total", width: 170, headerSort: false,
+      headerHozAlign: "center",
+      hozAlign: "center",
       formatter: (cell) => {
         return formatCurrency(cell.getValue());
-      } 
+      }
     },
     {
       title: " STATUS",
       field: "status_display",
-      width: 160,headerSort:false, hozAlign:"center", 
+      width: 160, headerSort: false, hozAlign: "center",
       headerHozAlign: "center",
       fixed: true,
       formatter: (cell) => {
@@ -320,23 +320,23 @@ const InvoiceList = () => {
         if (status === "Paid") color = "success";
         if (status === "Unpaid") color = "danger";
         if (status === "On Hold") color = "warning";
-        
-        return `<span class="badge bg-${color}">${status}</span>`;
+
+        return `<span class="new_badge bg-${color}" style="min-width: 70px;">${status}</span>`;
       }
     },
 
     {
       title: "PAYMENT TERM",
       field: "payment_term_name",
-       headerHozAlign: "center", 
-       hozAlign: "center",
-      width: 160,headerSort:false,
+      headerHozAlign: "center",
+      hozAlign: "center",
+      width: 160, headerSort: false,
       fixed: true
     },
-    
-    
+
+
   ];
-  
+
   useEffect(() => {
 
     tabulatorRef.current = new Tabulator(tableRef.current, {
@@ -354,7 +354,7 @@ const InvoiceList = () => {
         return {
           status: invoice_status || "",
           vendor_search: searchValue || "",
-          due_date_from: filters.due_date_from || "", 
+          due_date_from: filters.due_date_from || "",
           due_date_to: filters.due_date_to || "",
           invoice_date_from: invoiceDateFilters.invoice_date_from || "",
           invoice_date_to: invoiceDateFilters.invoice_date_to || "",
@@ -362,7 +362,7 @@ const InvoiceList = () => {
         };
       },
 
-      ajaxRequestFunc:  async (url, config, params) => {
+      ajaxRequestFunc: async (url, config, params) => {
         const sorter = params.sort && params.sort.length > 0 ? params.sort[0] : null;
 
         const requestParams = {
@@ -370,7 +370,7 @@ const InvoiceList = () => {
           size: params.size || 20,
           status: params.status || "",
           vendor_search: params.vendor_search || "",
-          due_date_from: params.due_date_from || "", 
+          due_date_from: params.due_date_from || "",
           due_date_to: params.due_date_to || "",
           invoice_date_from: params.invoice_date_from || "",
           invoice_date_to: params.invoice_date_to || "",
@@ -410,7 +410,7 @@ const InvoiceList = () => {
   };
   const clearDateRange = () => {
     // Only reset date-related states
-    setDateRangeDisplay(""); 
+    setDateRangeDisplay("");
     setFilters({ due_date_from: "", due_date_to: "" });
   };
   const clearFilter = () => {
@@ -434,171 +434,171 @@ const InvoiceList = () => {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-3 ps-1">
-          <h5 className="mb-0 fw-bold d-flex align-items-center gap-2" style={{ color:"#111827" }}>
-            <span style={{ width:32,height:32,borderRadius:10,background:"#ede9fe",display:"inline-flex",alignItems:"center",justifyContent:"center" }}>
-              <FontAwesomeIcon icon={faListUl} style={{ fontSize:13,color:"#7c3aed" }} />
-            </span>
-            All Invoices
-          </h5>
-          <button
-            onClick={() => { window.location.href="/purchaseorder/invoicedue"; }}
-            style={{
-              background:"#fef3c7",
-              color:"#d97706",
-              border:"1.5px solid #d97706",
-              fontWeight:700,
-              fontSize:12,
-              padding:"7px 14px",
-              borderRadius:9,
-              cursor:"pointer",
-              display:"flex",
-              alignItems:"center",
-              gap:6,
-              transition:"all .2s ease",
-              boxShadow:"0 2px 8px rgba(217,119,6,.15)",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = "#d97706";
-              e.currentTarget.style.color = "#fff";
-              e.currentTarget.style.boxShadow = "0 4px 14px rgba(217,119,6,.35)";
-              e.currentTarget.style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = "#fef3c7";
-              e.currentTarget.style.color = "#d97706";
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(217,119,6,.15)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-          >
-            Due Payments
-          </button>
+        <h5 className="mb-0 fw-bold d-flex align-items-center gap-2" style={{ color: "#111827" }}>
+          <span style={{ width: 32, height: 32, borderRadius: 10, background: "#ede9fe", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+            <FontAwesomeIcon icon={faListUl} style={{ fontSize: 13, color: "#7c3aed" }} />
+          </span>
+          All Invoices
+        </h5>
+        <button
+          onClick={() => { window.location.href = "/purchaseorder/invoicedue"; }}
+          style={{
+            background: "#fef3c7",
+            color: "#d97706",
+            border: "1.5px solid #d97706",
+            fontWeight: 700,
+            fontSize: 12,
+            padding: "7px 14px",
+            borderRadius: 9,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            transition: "all .2s ease",
+            boxShadow: "0 2px 8px rgba(217,119,6,.15)",
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = "#d97706";
+            e.currentTarget.style.color = "#fff";
+            e.currentTarget.style.boxShadow = "0 4px 14px rgba(217,119,6,.35)";
+            e.currentTarget.style.transform = "translateY(-1px)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "#fef3c7";
+            e.currentTarget.style.color = "#d97706";
+            e.currentTarget.style.boxShadow = "0 2px 8px rgba(217,119,6,.15)";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
+          Due Payments
+        </button>
       </div>
       <DashboardOverview summary={summary} />
       <div className="card mb-3">
         <div className="p-3">
           <div className="">
-        <div className="row mb-3">
-        {/* Order Number */}
-        <div className="col-md-3">
-            <label className="form-label">Search</label>
-            <div className="position-relative">
-              <input
-                id="filter_vendor"
-                name="vendor_search"          // important
-                type="text"
-                autoComplete="off"            // disable browser autocomplete
-                className="form-control"
-                placeholder="Vendor Name or Vendor Code"
-                value={searchValue}
-                onChange={(e) => {
-                  handleVendorSearch(e.target.value);
-                  if (tabulatorRef.current) {
-                    tabulatorRef.current.setPage(1);
-                  }
-                }}
-                onFocus={() => vendors.length && setShowDropdown(true)}
-              />
+            <div className="row mb-3">
+              {/* Order Number */}
+              <div className="col-md-3">
+                <label className="form-label">Search</label>
+                <div className="position-relative">
+                  <input
+                    id="filter_vendor"
+                    name="vendor_search"          // important
+                    type="text"
+                    autoComplete="off"            // disable browser autocomplete
+                    className="form-control"
+                    placeholder="Vendor Name or Vendor Code"
+                    value={searchValue}
+                    onChange={(e) => {
+                      handleVendorSearch(e.target.value);
+                      if (tabulatorRef.current) {
+                        tabulatorRef.current.setPage(1);
+                      }
+                    }}
+                    onFocus={() => vendors.length && setShowDropdown(true)}
+                  />
 
-              {showDropdown && vendors.length > 0 && (
-                <ul
-                  className="list-group position-absolute w-100 shadow"
-                  style={{ zIndex: 1000, maxHeight: "250px", overflowY: "auto" }}
-                >
-                  {vendors.map((vendor) => (
-                    <li
-                      key={vendor.id}
-                      className="list-group-item list-group-item-action"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleSelectVendor(vendor)}
+                  {showDropdown && vendors.length > 0 && (
+                    <ul
+                      className="list-group position-absolute w-100 shadow"
+                      style={{ zIndex: 1000, maxHeight: "250px", overflowY: "auto" }}
                     >
-                      <strong>{vendor.vendor_code}</strong> - {vendor.vendor_name}
-                    </li>
+                      {vendors.map((vendor) => (
+                        <li
+                          key={vendor.id}
+                          className="list-group-item list-group-item-action"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleSelectVendor(vendor)}
+                        >
+                          <strong>{vendor.vendor_code}</strong> - {vendor.vendor_name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Invoice Status</label>
+                <select
+                  name="status"
+                  className="form-control form-select"
+                  value={invoice_status}
+                  onChange={(e) => {
+                    setInvoiceStatus(e.target.value);
+                    if (tabulatorRef.current) {
+                      tabulatorRef.current.setPage(1);
+                    }
+                  }}
+                >
+                  <option value="">All</option>
+                  {[{ "id": 1, "name": "Paid" }, { "id": 2, "name": "Unpaid" }, { "id": 3, "name": "Cancelled" }, { "id": 4, "name": "On Hold" }]?.map(pt => (
+                    <option key={pt.id} value={pt.id}>{pt.name}</option>
                   ))}
-                </ul>
-              )}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label"> Due Date</label>
+                <DateRangeInput isRange={true}
+                  value={dateRangeDisplay}
+                  onChange={handleDateChange} onCancel={clearDateRange}
+                  placeholder="Select date range" className="bg-white"
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Payment Term</label>
+                <select
+                  className="form-control form-select"
+                  value={paymentTerm}
+                  onChange={(e) => {
+                    setPaymentTerm(e.target.value);
+                    if (tabulatorRef.current) {
+                      tabulatorRef.current.setPage(1);
+                    }
+                  }}
+                >
+                  <option value="">All</option>
+                  {paymentTerms?.map((term) => (
+                    <option key={term.id} value={term.id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-        </div>
-        <div className="col-md-3">
-            <label className="form-label">Invoice Status</label>
-        <select
-            name="status"
-            className="form-control form-select"
-            value={invoice_status}
-            onChange={(e) => {
-              setInvoiceStatus(e.target.value);
-              if (tabulatorRef.current) {
-                tabulatorRef.current.setPage(1);
-              }
-            }}
-        >
-            <option value="">All</option>
-            {[{"id":1, "name":"Paid"},{"id":2, "name":"Unpaid"},{"id":3, "name":"Cancelled"},{"id":4, "name":"On Hold"}]?.map(pt => (
-                <option key={pt.id} value={pt.id}>{pt.name}</option>
-            ))}
-        </select>
-        </div>
-        <div className="col-md-3">
-            <label className="form-label"> Due Date</label>
-            <DateRangeInput isRange={true}
-              value={dateRangeDisplay}
-              onChange={handleDateChange} onCancel={clearDateRange} 
-              placeholder="Select date range" className="bg-white" 
-            />
-        </div>
-        <div className="col-md-3">
-            <label className="form-label">Payment Term</label>
-            <select
-                className="form-control form-select"
-                value={paymentTerm}
-                onChange={(e) => {
-                  setPaymentTerm(e.target.value);
-                  if (tabulatorRef.current) {
-                    tabulatorRef.current.setPage(1);
-                  }
-                }}
-            >
-            <option value="">All</option>
-             {paymentTerms?.map((term) => (
-              <option key={term.id} value={term.id}>
-                {term.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="row d-none">
-        <div className="col-md-3">
-            <label className="form-label">Invoice Date</label>
-            <DateRangeInput isRange={true}
-              value={invoiceDateDisplay}
-              onChange={handleInvoiceDateChange}
-              onCancel={() => {
-                setInvoiceDateDisplay("");
-                setInvoiceDateFilters({
-                  invoice_date_from: "",
-                  invoice_date_to: ""
-                });
-              }}
-              placeholder="Select invoice date range"
-              className="bg-white"
-            />
-        </div>
-        
-      </div>
-        {/* FILTER ACTIONS */}
-        <div className="mt-3 d-flex gap-2">
-        <button type="button" className="btn btn-primary" onClick={applyFilter}>
-            <i className="fas fa-search" style={{fontSize:"13px", marginRight:"5px"}}></i>
-            Search
-        </button>
+            <div className="row d-none">
+              <div className="col-md-3">
+                <label className="form-label">Invoice Date</label>
+                <DateRangeInput isRange={true}
+                  value={invoiceDateDisplay}
+                  onChange={handleInvoiceDateChange}
+                  onCancel={() => {
+                    setInvoiceDateDisplay("");
+                    setInvoiceDateFilters({
+                      invoice_date_from: "",
+                      invoice_date_to: ""
+                    });
+                  }}
+                  placeholder="Select invoice date range"
+                  className="bg-white"
+                />
+              </div>
 
-        <button type="button"  className="btn btn-light" onClick={clearFilter}>
-            Clear
-        </button>
-        </div>
-    </div>
-    </div></div>
-    <div className="card ">
+            </div>
+            {/* FILTER ACTIONS */}
+            <div className="mt-3 d-flex gap-2">
+              <button type="button" className="btn btn-primary" onClick={applyFilter}>
+                <i className="fas fa-search" style={{ fontSize: "13px", marginRight: "5px" }}></i>
+                Search
+              </button>
+
+              <button type="button" className="btn btn-light" onClick={clearFilter}>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div></div>
+      <div className="card ">
         <div className="card-body p-1 pt-0 pb-0 mt-0 mb-0 ">
           <div ref={tableRef} />
         </div>

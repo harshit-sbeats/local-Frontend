@@ -77,8 +77,8 @@ const ManufacturerManagement = () => {
       formatter: (cell) => {
         const val = cell.getValue();
         return val === 1 
-          ? `<span class="badge badge-success">Active</span>` 
-          : `<span class="badge badge-secondary">Inactive</span>`;
+          ? `<span class="new_badge badge-success">Active</span>` 
+          : `<span class="new_badge badge-secondary">Inactive</span>`;
       }
     },
     {

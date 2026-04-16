@@ -20,7 +20,7 @@ const ALL_COLUMNS = [
     headerHozAlign: "center",
     fixed: true,
     width: 160,
-    formatter: (cell) => `<span class="badge bg-primary">${cell.getValue() || 0}</span>`
+    formatter: (cell) => `<span class="new_badge bg-primary">${cell.getValue() || 0}</span>`
   },
   {
     title: "ACTIONS",
