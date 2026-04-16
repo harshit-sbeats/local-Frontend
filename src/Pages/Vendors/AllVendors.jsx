@@ -335,7 +335,7 @@ const AllVendors = () => {
 
     tabulatorRef.current = new Tabulator(tableRef.current, {
       layout: "fitColumns",
-      height: "auto-fit",
+      height: "calc(100vh - 320px)",
       placeholder: "No records found",
       pagination: true,
       paginationMode: "remote",
@@ -414,50 +414,58 @@ const AllVendors = () => {
 
   return (
     <>
-      {/* HEADER */}
-      <div className="d-flex justify-content-between ps-1 mb-2">
-        <h5 className="mt-2 pb-1 fw-bold">
-          <FontAwesomeIcon icon={faListUl} className="me-2 text-primary" /> All
-          Vendors
-        </h5>
-        <div className="d-flex gap-2 align-items-center">
-          <div className="d-flex gap-2">
-            {/* Actions dropdown */}
-            <div className="btn-group">
-              <button
-                className="btn btn-outline-dark"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i className="fas fa-bars me-2"></i>
-                Actions
-              </button>
-              <button
-                className="btn btn-dark dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown"
-              ></button>
+      <div  
+       style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1020,
+        background: "#fff",
+        paddingTop: "0.25rem",
+      }}
+      >
+        {/* HEADER */}
+        <div className="d-flex justify-content-between ps-1 mb-1">
+          <h5 className="mt-2 pb-1 fw-bold">
+            <FontAwesomeIcon icon={faListUl} className="me-2 text-primary" />{" "}
+            All Vendors
+          </h5>
+          <div className="d-flex gap-2 align-items-center">
+            <div className="d-flex gap-2">
+              {/* Actions dropdown */}
+              <div className="btn-group">
+                <button
+                  className="btn btn-outline-dark"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i className="fas fa-bars me-2"></i>
+                  Actions
+                </button>
+                <button
+                  className="btn btn-dark dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown"
+                ></button>
 
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a
-                    className="dropdown-item"
-                    href={"/vendor/addnewvendor"}
-                  >
-                    <i className="fas fa-plus me-2"></i>
-                    Add New
-                  </a>
-                </li>
-              </ul>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a
+                      className="dropdown-item"
+                      href={"/vendor/addnewvendor"}
+                    >
+                      <i className="fas fa-plus me-2"></i>
+                      Add New
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* TABLE */}
-      <div className="card">
-        <div className="card-body">
-          <div>
-            <div className="row mb-3 g-3">
+        {/* FILTERS */}
+        <div className="card">
+          <div className="card-body">
+            <div className="row ">
               {/* Vendor Search */}
               <div className="col-md-4">
                 <label className="form-label">Search</label>
@@ -561,7 +569,7 @@ const AllVendors = () => {
             </div>
 
             {/* FILTER ACTIONS */}
-            <div className="mt-3 d-flex gap-2">
+            <div className="mt-2 d-flex gap-2">
               <button className="btn btn-primary" onClick={applyFilter}>
                 <i className="fas fa-search me-2"></i>
                 Filter
@@ -574,8 +582,10 @@ const AllVendors = () => {
           </div>
         </div>
       </div>
-      <div className="card">
-        <div className="card-body p-0 m-0">
+
+      {/* TABLE */}
+      <div className="card mt-2">
+        <div className="card-body p-0 m-0" style={{ overflow: "auto" }}>
           <div ref={tableRef} />
         </div>
       </div>

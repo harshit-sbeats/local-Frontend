@@ -313,9 +313,9 @@ const VendorImportIndex = () => {
                     {step === 1 ? (
                         /* STAGE 1: UPLOAD */
                         <div className="animate__animated animate__fadeIn">
-                            <Row className="mb-3">
-                                <Col md="6">
-                                    <div {...getRootProps()} className={`mt-3 border rounded-3 p-5  text-center transition-all ${isDragActive ? 'bg-primary-subtle border-primary' : 'bg-light border-dashed'}`} style={{ cursor: 'pointer', border: '2px dashed #dee2e6' }}>
+                            <Row className=" align-items-stretch">
+                                <Col md="6" className="d-flex">
+                                    <div {...getRootProps()} className={`border rounded-3 h-100 w-100  d-flex flex-column justify-content-center p-5  text-center transition-all ${isDragActive ? 'bg-primary-subtle border-primary' : 'bg-light border-dashed'}`} style={{ cursor: 'pointer', border: '2px dashed #dee2e6' }}>
                                         <input {...getInputProps()} />
                                         {!selectedFile ? (
                                             <>
@@ -339,8 +339,8 @@ const VendorImportIndex = () => {
                                         )}
                                     </div>
                                 </Col>
-                                <Col md="6">
-                                    <div className="card p-2">
+                                <Col md="6" className="d-flex">
+                                    <div className="card p-2  p-2 w-100 h-100 d-flex flex-column">
                                         <div className="card-header">
                                             <h6 className="fw-bold mb-2">How should duplicate records be handled?</h6>
 
@@ -382,7 +382,7 @@ const VendorImportIndex = () => {
                                         </div>
 
                                         <div className="card-footer">
-                                            <small className="text-muted d-block mb-2">
+                                            <small className="text-muted d-block">
                                                 {importType === 'vendor' ? (
                                                     <>
                                                         Duplicate detection rules:<br />
