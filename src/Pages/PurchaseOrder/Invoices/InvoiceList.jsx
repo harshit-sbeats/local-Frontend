@@ -341,7 +341,7 @@ const InvoiceList = () => {
 
     tabulatorRef.current = new Tabulator(tableRef.current, {
       layout: "fitColumns",
-      height: "calc(100vh - 350px)",
+      height: "calc(100vh - 510px)",
       placeholder: "No records found",
       pagination: true,
       paginationMode: "remote",

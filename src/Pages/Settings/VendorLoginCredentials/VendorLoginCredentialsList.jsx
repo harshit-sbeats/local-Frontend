@@ -9,8 +9,10 @@ import { useAuth } from "../../../Context/AuthContext";
 const VendorLoginCredentialsList = () => {
   const { user, authChecked } = useAuth();
   const isSuper = Boolean(user?.is_superuser);
+
   const tableRef = useRef(null);
   const tabulatorRef = useRef(null);
+
   const [searchValue, setSearchValue] = useState("");
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
   const [vendorsList, setVendorsList] = useState([]);
@@ -18,11 +20,16 @@ const VendorLoginCredentialsList = () => {
 
   const refreshTable = () => tabulatorRef.current?.replaceData();
 
-  const credentialVendorIds = useMemo(() => new Set((tableRows || []).map((r) => r.vendor_id)), [tableRows]);
+  const credentialVendorIds = useMemo(
+    () => new Set((tableRows || []).map((r) => r.vendor_id)),
+    [tableRows]
+  );
 
   useEffect(() => {
     if (!isSuper) return;
+
     let cancelled = false;
+
     (async () => {
       try {
         const res = await apiFetch(`${API_BASE}api/vendor_api/lists`);
@@ -31,6 +38,7 @@ const VendorLoginCredentialsList = () => {
         if (!cancelled) setVendorsList([]);
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -39,17 +47,22 @@ const VendorLoginCredentialsList = () => {
   const handleDelete = async (row) => {
     Swal.fire({
       title: "Remove credentials?",
-      text: `This will delete stored login details for ${row.vendor_company_name || "this vendor"}.`,
+      text: `This will delete stored login details for ${
+        row.vendor_company_name || "this vendor"
+      }.`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#111827",
       confirmButtonText: "Yes, remove",
     }).then(async (result) => {
       if (!result.isConfirmed) return;
+
       try {
-        const res = await apiFetch(`${API_BASE}api/vendor-portal-credentials/delete/${row.credential_id}`, {
-          method: "DELETE",
-        });
+        const res = await apiFetch(
+          `${API_BASE}api/vendor-portal-credentials/delete/${row.credential_id}`,
+          { method: "DELETE" }
+        );
+
         if (res.status) {
           Swal.fire("Removed", res.message || "Credentials deleted.", "success");
           refreshTable();
@@ -62,74 +75,105 @@ const VendorLoginCredentialsList = () => {
 
   useEffect(() => {
     if (!isSuper) return;
+
     if (tabulatorRef.current) {
       tabulatorRef.current.destroy();
       tabulatorRef.current = null;
     }
+
     tabulatorRef.current = new Tabulator(tableRef.current, {
       layout: "fitColumns",
-      // height: "750px",
-      height: "calc(100vh - 240px)",
-      placeholder: `<div class="cl-state-cell"><div class="cl-state-icon"><i class="fas fa-key"></i></div>No vendor login credentials yet</div>`,
+
+      // ✅ height removed (auto height now)
+      // height: "calc(100vh - 240px)",
+
+      placeholder: `<div class="cl-state-cell">
+        <div class="cl-state-icon"><i class="fas fa-key"></i></div>
+        No vendor login credentials yet
+      </div>`,
+
       ajaxURL: `${API_BASE}api/vendor-portal-credentials`,
+
       ajaxRequestFunc: async (url) => {
-        const query = new URLSearchParams({ search: searchValue || "" }).toString();
+        const query = new URLSearchParams({
+          search: searchValue || "",
+        }).toString();
+
         const response = await apiFetch(`${url}?${query}`);
         const rows = response.data || [];
         setTableRows(rows);
         return response;
       },
+
       ajaxResponse: (url, params, response) => response.data || [],
+
       columns: [
         {
           title: "Vendor",
           field: "vendor_company_name",
           minWidth: 180,
           headerSort: false,
-          headerHozAlign: "center",
-          hozAlign: "center",
+          headerHozAlign: "left",
+          hozAlign: "left",
           formatter: (cell) => {
             const d = cell.getData();
-            return `<div><span style="font-weight:700;color:#111827;font-size:14px;">${cell.getValue() || "—"}</span><br/>
-              <span style="font-size:12px;color:#6b7280;font-family:monospace;">${d.vendor_code || ""}</span></div>`;
+            return `<div>
+              <span style="font-weight:700;color:#111827;font-size:14px;">
+                ${cell.getValue() || "—"}
+              </span><br/>
+              <span style="font-size:12px;color:#6b7280;font-family:monospace;">
+                ${d.vendor_code || ""}
+              </span>
+            </div>`;
           },
         },
         {
           title: "Website user name",
           field: "website_username",
           minWidth: 180,
-          headerHozAlign: "center",
-          hozAlign: "center",
+          headerHozAlign: "left",
+          hozAlign: "left",
           headerSort: false,
           formatter: (cell) =>
-            `<span style="font-size:13px;color:#374151;font-weight:600;">${cell.getValue() || "—"}</span>`,
+            `<span style="font-size:13px;color:#374151;font-weight:600;">
+              ${cell.getValue() || "—"}
+            </span>`,
         },
         {
           title: "User email",
           field: "website_user_email",
-          minWidth: 180, headerHozAlign: "center",
-          hozAlign: "center",
+          minWidth: 180,
+          headerHozAlign: "left",
+          hozAlign: "left",
           headerSort: false,
-          formatter: (cell) => `<span style="font-size:12px;color:#4b5563;">${cell.getValue() || "—"}</span>`,
+          formatter: (cell) =>
+            `<span style="font-size:12px;color:#4b5563;">
+              ${cell.getValue() || "—"}
+            </span>`,
         },
         {
           title: "Website link",
           field: "website_link",
-          minWidth: 180, headerHozAlign: "center",
-          hozAlign: "center",
+          minWidth: 180,
+          headerHozAlign: "left",
+          hozAlign: "left",
           headerSort: false,
           formatter: (cell) => {
             const u = cell.getValue() || "";
             const short = u.length > 48 ? `${u.slice(0, 46)}…` : u;
-            return `<a href="${u}" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#2563eb;">${short || "—"}</a>`;
+
+            return `<a href="${u}" target="_blank" rel="noopener noreferrer"
+              style="font-size:12px;color:#2563eb;">
+              ${short || "—"}
+            </a>`;
           },
         },
         {
           title: "OTP",
           field: "otp_enabled",
-          width: 100, headerHozAlign: "center",
-          hozAlign: "center",
-          hozAlign: "",
+          width: 100,
+          headerHozAlign: "left",
+          hozAlign: "left",
           headerSort: false,
           formatter: (cell) =>
             cell.getValue()
@@ -139,12 +183,14 @@ const VendorLoginCredentialsList = () => {
         {
           title: "Status",
           field: "is_active",
-          width: 100,
-          hozAlign: "", headerHozAlign: "center",
-          hozAlign: "center",
+          width: 120,
+          headerHozAlign: "left",
+          hozAlign: "left",
           headerSort: false,
           formatter: (cell) => {
-            const active = cell.getValue() === true || cell.getValue() === 1;
+            const active =
+              cell.getValue() === true || cell.getValue() === 1;
+
             return active
               ? `<span class="new_badge new_badge-success">ACTIVE</span>`
               : `<span class="new_badge new_badge_inactive">INACTIVE</span>`;
@@ -153,38 +199,47 @@ const VendorLoginCredentialsList = () => {
         {
           title: "Actions",
           width: 160,
-          hozAlign: "center", headerHozAlign: "center",
           hozAlign: "center",
+          headerHozAlign: "center",
           headerSort: false,
           formatter: function () {
             const wrap = document.createElement("div");
-            wrap.style.cssText = "display:flex;gap:5px;justify-content:center;align-items:center;";
+            wrap.style.cssText =
+              "display:flex;gap:5px;justify-content:center;align-items:center;";
+
             const editBtn = document.createElement("button");
             editBtn.className = "cl-edit-btn edit-btn";
             editBtn.innerHTML = `<i class="fas fa-pen"></i> Edit`;
+
             const delBtn = document.createElement("button");
             delBtn.className = "cl-del-btn delete-btn";
             delBtn.innerHTML = `<i class="fas fa-trash"></i>`;
+
             wrap.appendChild(editBtn);
             wrap.appendChild(delBtn);
+
             return wrap;
           },
           cellClick: (e, cell) => {
             const btn = e.target.closest("button");
             if (!btn) return;
+
             const rowData = cell.getData();
-            if (btn.classList.contains("edit-btn")) setModalConfig({ type: "edit", data: rowData });
-            else if (btn.classList.contains("delete-btn")) handleDelete(rowData);
+
+            if (btn.classList.contains("edit-btn")) {
+              setModalConfig({ type: "edit", data: rowData });
+            } else if (btn.classList.contains("delete-btn")) {
+              handleDelete(rowData);
+            }
           },
         },
       ],
     });
+
     return () => tabulatorRef.current?.destroy();
   }, [searchValue, isSuper]);
 
-  if (!authChecked) {
-    return null;
-  }
+  if (!authChecked) return null;
 
   if (!isSuper) {
     return (
@@ -192,7 +247,9 @@ const VendorLoginCredentialsList = () => {
         <div className="cl-card tbl-purple p-5 text-center">
           <i className="fas fa-lock fa-2x text-muted mb-3" />
           <h4 className="fw-bold text-dark">Access restricted</h4>
-          <p className="text-muted mb-0">Vendor login credentials are visible only to Super Admins.</p>
+          <p className="text-muted mb-0">
+            Vendor login credentials are visible only to Super Admins.
+          </p>
         </div>
       </div>
     );
@@ -207,10 +264,16 @@ const VendorLoginCredentialsList = () => {
           </div>
           <div>
             <h3 className="cl-title">Vendor Login Credentials</h3>
-            <p className="cl-subtitle">Manage encrypted vendor portal logins (Super Admin only)</p>
+            <p className="cl-subtitle">
+              Manage encrypted vendor portal logins (Super Admin only)
+            </p>
           </div>
         </div>
-        <button className="cl-search-btn" type="button" onClick={() => setModalConfig({ type: "add", data: null })}>
+
+        <button
+          className="cl-search-btn"
+          onClick={() => setModalConfig({ type: "add", data: null })}
+        >
           <i className="fas fa-plus" /> Add credential
         </button>
       </div>
@@ -229,12 +292,16 @@ const VendorLoginCredentialsList = () => {
             }}
           />
         </div>
-        <button className="cl-search-btn" type="button" onClick={() => tabulatorRef.current?.replaceData()}>
+
+        <button
+          className="cl-search-btn"
+          onClick={() => tabulatorRef.current?.replaceData()}
+        >
           <i className="fas fa-search" /> Search
         </button>
+
         {searchValue && (
           <button
-            type="button"
             className="cl-clear-btn"
             onClick={() => {
               setSearchValue("");

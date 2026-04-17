@@ -211,7 +211,7 @@ const PurchaseOrderList = () => {
     placeholder: "No records found",
   
     layout: "fitColumns",
-    height: "calc(100vh - 300px)",
+    height: "calc(100vh - 490px)",
     pagination: true,
     paginationMode: "remote",
     paginationSize: 20,

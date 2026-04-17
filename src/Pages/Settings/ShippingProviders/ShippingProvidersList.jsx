@@ -169,7 +169,7 @@ const ShippingProvidersList = () => {
         )}
       </div>
 
-      <div className="cl-card tbl-purple" style={{ height: "calc(100vh - 240px)" }}>
+      <div className="cl-card tbl-purple" style={{ height: "calc(100vh - 270px)" }}>
         <div ref={tableRef} style={{ height: "100%" }} />
       </div>
 

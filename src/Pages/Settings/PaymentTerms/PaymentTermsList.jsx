@@ -181,7 +181,7 @@ const PaymentTermsList = () => {
     tabulatorRef.current = new Tabulator(tableRef.current, {
       ajaxURL: `${API_BASE}api/payment-terms`,
       layout:  "fitColumns",
-      height:  "calc(100vh - 240px)",
+      height:  "calc(100vh - 290px)",
       placeholder: `<div class="ptl-empty"><div class="ptl-empty-icon"><i class="fas fa-file-invoice-dollar"></i></div>No payment terms found</div>`,
       ajaxResponse: (url, params, response) => {
         const rows = response.data || [];
