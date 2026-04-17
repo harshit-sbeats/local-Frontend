@@ -199,7 +199,7 @@ const CountriesList = () => {
       },
       ajaxResponse: (url, params, response) => response.data || [],
       layout: "fitDataStretch",
-      height: "100%",
+      height: "auto-fit",
       pagination: "remote",
       paginationSize: 10,
       placeholder: `<div class="cl-state-cell"><div class="cl-state-icon"><i class="fas fa-globe"></i></div>No countries found</div>`,
