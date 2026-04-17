@@ -189,7 +189,7 @@ const Dashboard = () => {
           {/* Sales Overview */}
           <div className="col-12 col-lg-5">
             <div className="card border  shadow-sm h-100 d-flex flex-column" style={{ borderRadius: 10, fontFamily: FONT }}>
-              <div className="p-2 d-flex justify-content-between top_border_design align-items-center" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
+              <div className="p-2 d-flex justify-content-between top_border_design align-items-center" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb", borderRadius: "10px 10px 0 0" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Sales Overview</h6>
                 <button
                   className="btn btn-sm btn-outline-secondary"
@@ -248,7 +248,7 @@ const Dashboard = () => {
           {/* PO Status Donut */}
           <div className="col-12 col-lg-4">
             <div className="card border shadow-sm h-100" style={{ borderRadius: 10, fontFamily: FONT }}>
-              <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
+              <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb", borderRadius: "10px 10px 0 0" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Purchase Order Status</h6>
               </div>
               <div className="card-body d-flex flex-column align-items-center justify-content-center">
@@ -313,10 +313,11 @@ const Dashboard = () => {
                   className="card-header"
                   style={{
                     background: "#fff",
-                    borderBottom: "0.5px solid #e5e7eb"
+                    borderBottom: "0.5px solid #e5e7eb",
+                    borderRadius: "10px 10px 0px 0px"
                   }}
                 >
-                  <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>
+                  <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0  }}>
                     {title}
                   </h6>
                 </div>
@@ -359,7 +360,7 @@ const Dashboard = () => {
           {/* Recent Purchase Orders */}
           <div className="col-12 col-lg-6">
             <div className="card border shadow-sm h-100 d-flex flex-column" style={{ borderRadius: 10, fontFamily: FONT, height: 320 }}>
-              <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
+              <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb", borderRadius: "10px 10px 0px 0px" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Recent Purchase Orders</h6>
               </div>
               <div className="card-body p-0 d-flex flex-column" style={{ minHeight: 0 }}>
@@ -379,7 +380,7 @@ const Dashboard = () => {
                           <td style={{ padding: "9px 12px", color: "#374151" }}>{o.vendor}</td>
                           <td style={{ padding: "9px 12px", color: "#6b7280" }}>{o.date}</td>
                           <td style={{ padding: "9px 12px" }}>
-                            <span className={`new_badge bg-${o.statusColor} `} style={{ fontFamily: FONT, fontSize: 11 }}>
+                            <span className={`new_badge bg-${o.statusColor} `} style={{ fontFamily: FONT, fontSize: 11, minWidth: '120px', textAlign: "center" }}>
                               {o.status}
                             </span>
                           </td>
@@ -397,7 +398,7 @@ const Dashboard = () => {
           {/* Total Invoices Pie */}
           <div className="col-12 col-lg-6">
             <div className="card border shadow-sm h-100 d-flex flex-column" style={{ borderRadius: 10, fontFamily: FONT, height: 320 }}>
-              <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb" }}>
+              <div className="card-header" style={{ background: "#fff", borderBottom: "0.5px solid #e5e7eb", borderRadius: "10px 10px 0px 0px" }}>
                 <h6 style={{ fontWeight: 600, fontSize: 13, margin: 0 }}>Total Invoices</h6>
               </div>
               <div className="card-body d-flex flex-column align-items-center justify-content-between p-2" style={{ minHeight: 0 }}>
