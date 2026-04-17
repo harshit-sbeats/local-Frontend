@@ -148,7 +148,7 @@ const MainLayout = ({ children }) => {
       <SideMenu />
 
       <div
-        className="content-wrapper min-h-100vh"
+        className="content-wrapper  min-h-100vh"
         style={{ minHeight: "auto", backgroundColor: "#f4f6f9" }}
       >
         <div className="content-header py-2 px-3">
@@ -156,7 +156,7 @@ const MainLayout = ({ children }) => {
         </div>
 
         <section className="content px-3 pb-4">
-          <div className="container-fluid">{children}</div>
+          <div className="container-fluid background-wrapper">{children}</div>
         </section>
       </div>
 

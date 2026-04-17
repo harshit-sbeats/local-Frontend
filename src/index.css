@@ -8,9 +8,19 @@ body {
 }
 
 
+.background-wrapper {
+  background: white;
+  padding: 20px !important;
+  border-radius: 12px;
+  height: calc(100vh - 92px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .margin_none {
   margin-bottom: 0px !important;
 }
+
 .new_badge {
   padding: 3px 10px;
   border-radius: 20px;
@@ -33,6 +43,7 @@ body {
 .new_badge_default {
   background: #4338ca;
 }
+
 .new_badge-error {
   background: #dc2626;
 }
@@ -46,11 +57,13 @@ body {
 }
 
 .new_badge_on {
-background: #b45309;
+  background: #b45309;
 }
+
 .new_badge_off {
-background: #6b7280;
+  background: #6b7280;
 }
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

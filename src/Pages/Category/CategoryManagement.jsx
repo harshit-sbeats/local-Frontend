@@ -7,10 +7,10 @@ import { apiFetch } from "../../Utils/apiFetch";
 const CategoryManagement = () => {
   const tableRef = useRef(null);
   const tabulatorRef = useRef(null);
-  const [modalConfig, setModalConfig] = useState({ 
-    show: false, 
-    mode: 'add', 
-    initialData: null 
+  const [modalConfig, setModalConfig] = useState({
+    show: false,
+    mode: 'add',
+    initialData: null
   });
   const [main_categories, setMain_categories] = useState([]);
   // --- Handlers ---
@@ -24,70 +24,72 @@ const CategoryManagement = () => {
 
   const refreshTable = () => {
     if (tabulatorRef.current) {
-      tabulatorRef.current.setData(); 
+      tabulatorRef.current.setData();
     }
   };
 
   const handleDelete = async (id) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!"
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        const response = await apiFetch(`${API_BASE}api/product_api/product_categories/delete/${id}`, { 
-          method: "DELETE",
-        });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await apiFetch(`${API_BASE}api/product_api/product_categories/delete/${id}`, {
+            method: "DELETE",
+          });
 
-        if (response.status) {
-          Swal.fire("Deleted!", "The Category has been deleted.", "success");
-          refreshTable();
-        } else {
-          Swal.fire("Error!", "Failed to delete the Category.", "error");
+          if (response.status) {
+            Swal.fire("Deleted!", "The Category has been deleted.", "success");
+            refreshTable();
+          } else {
+            Swal.fire("Error!", "Failed to delete the Category.", "error");
+          }
+        } catch (error) {
+          Swal.fire("Error!", "Failed to delete.", "error");
         }
-      } catch (error) {
-        Swal.fire("Error!", "Failed to delete.", "error");
       }
-    }
-  });
-};
+    });
+  };
 
   // --- Define Columns INSIDE the component ---
   const columns = [
     {
-      title: "Name", 
-      field: "name", 
-      
-      hozAlign: "left",headerSort:false,
+      title: "Name",
+      field: "name",
+
+      hozAlign: "left", headerSort: false,
       formatter: (cell) => `<span class="fw-bold text-dark">${cell.getValue()}</span>`
     },
     {
       title: "Type",
-      field: "is_primary",headerSort:false,
+      field: "is_primary", headerSort: false,
       minWidth: 100,
       formatter: (cell) => {
         const val = cell.getValue();
-        if(val === 1)
-          return `<span class="new_badge badge-success fw-bold">Primary</span>`;
-        else
-          return `<span class="new_badge badge-secondary fw-bold">Secondary</span>`; 
+
+        if (val === 1) {
+          return `<span class="new_badge badge-success fw-bold" style="min-width: 70px; text-align: center; display: inline-block;">Primary</span>`;
+        } else {
+          return `<span class="new_badge badge-secondary fw-bold" style="min-width: 70px; text-align: center; display: inline-block;">Secondary</span>`;
+        }
       }
     },
     {
       title: "Status",
-      field: "status",headerSort:false,
+      field: "status", headerSort: false,
       width: 120,
       formatter: (cell) => {
         const val = cell.getValue();
-        if(val === 1)
+        if (val === 1)
           return `<span class="new_badge badge-success fw-bold">Active</span>`;
         else
-          return `<span class="new_badge badge-secondary fw-bold">In-active</span>`; 
+          return `<span class="new_badge badge-secondary fw-bold">In-active</span>`;
       }
     },
     {
@@ -140,7 +142,7 @@ const CategoryManagement = () => {
       },
 
       ajaxResponse: function (url, params, response) {
-        setMain_categories(response.main_categories||[])
+        setMain_categories(response.main_categories || [])
         return {
           data: response.data || [],
           last_page: response.last_page || 1,
@@ -153,7 +155,7 @@ const CategoryManagement = () => {
   }, []);
 
   const applyFilter = () => tabulatorRef.current.setPage(1);
-  
+
   const clearFilter = () => {
     const input = document.getElementById("filter_brand_name");
     if (input) input.value = "";
@@ -189,8 +191,8 @@ const CategoryManagement = () => {
       </div>
 
       {modalConfig.show && (
-        <CategoryModal 
-          mode={modalConfig.mode} 
+        <CategoryModal
+          mode={modalConfig.mode}
           main_categories={main_categories}
           initialData={modalConfig.initialData}
           onClose={closeModal}
